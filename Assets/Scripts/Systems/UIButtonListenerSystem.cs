@@ -42,6 +42,11 @@ namespace Systems
                     button.onClick.AddListener(() => SpawnEntity());
                 }
 
+                if (button.gameObject.name.Contains("CreateLevelEntity"))
+                {
+                    button.onClick.AddListener(() => CreateLevelEntity());
+                }
+
                 if (button.gameObject.name.Contains("DestroyEntity"))
                 {
                     button.onClick.AddListener(() => DeleteEntityLastEntity());
@@ -52,6 +57,13 @@ namespace Systems
                     button.onClick.AddListener(() => SpawnMultiEntities(button.gameObject));
                 }
             }
+        }
+
+        private void CreateLevelEntity()
+        {
+            Vector3 origin = new Vector3(Screen.width/2, Screen.height/2, 0);
+            entityCreator.CreateLevelEntity(origin, 1);
+            entityCreator.CreateLevelEntity(Vector3.zero, 1);
         }
 
         private void SpawnMultiEntities(GameObject buttonGameObject)

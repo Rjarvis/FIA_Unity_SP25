@@ -48,6 +48,22 @@ namespace Systems.Create
             return entity;
         }
 
+        public GameObject CreateLevelEntity(Vector3 position, float radius)
+        {
+            GameObject level = new GameObject($"LevelEntity_{radius}");
+            level.transform.position = position;
+
+            var entityComponent = level.AddComponent<EntityComponent>();
+            entityComponent.SetContext(GameContexts.Gameplay);
+
+            var levelComponent = level.AddComponent<LevelComponent>();
+            levelComponent.Initialize(radius);
+
+            EntitySystem.NotifyComponentAdded(entityComponent, levelComponent);
+
+            return level;
+        }
+
         private void ChangeColor(SpriteRenderer renderer)
         {
             var randArr = MathHelper.GenerateXNumbersForColorRGB(3);
