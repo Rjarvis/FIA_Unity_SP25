@@ -12,6 +12,12 @@ public class PixelEditor : EditorWindow
     private List<Color> palette = new List<Color>(); // Dynamic palette
     private Color currentColor = Color.black;
     private int selectedPaletteIndex = -1;
+    
+    private float zoom = 1f;
+    private float minZoom = 0.5f;
+    private float maxZoom = 3f;
+    private const float zoomStep = 0.1f;
+
 
     [MenuItem("Tools/Pixel Editor")]
     public static void ShowWindow()
@@ -41,12 +47,24 @@ public class PixelEditor : EditorWindow
         DrawColorField();
         DrawPaletteSwatches();
         DrawSaveLoadButton();
+        //Must be last-Experimental
+        //HandleZoomScroll();
     }
 
     private void DrawGrid()
     {
+        //Zoom Controls
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Zoom In")) zoom = Mathf.Min(zoom + zoomStep, maxZoom);
+        if (GUILayout.Button("Zoom Out")) zoom = Mathf.Max(zoom - zoomStep, minZoom);
+        GUILayout.Label($"Zoom: {zoom:F1}x");
+        GUILayout.EndHorizontal();
+        //end Zoom Controls
+        
         GUILayout.Label("Pixel Grid", EditorStyles.boldLabel);
-        Rect gridRect = GUILayoutUtility.GetRect(gridSize * cellSize, gridSize * cellSize);
+        int scaledCellSize = Mathf.RoundToInt(cellSize * zoom);
+        Rect gridRect = GUILayoutUtility.GetRect(gridSize * scaledCellSize, gridSize * scaledCellSize);
+
 
         for (int y = 0; y < gridSize; y++)
         {
@@ -55,7 +73,7 @@ public class PixelEditor : EditorWindow
                 int index = pixelGrid[x, y];
                 Color color = (index >= 0 && index < palette.Count) ? palette[index] : Color.clear;
 
-                Rect cellRect = new Rect(gridRect.x + x * cellSize, gridRect.y + y * cellSize, cellSize, cellSize);
+                Rect cellRect = new Rect(gridRect.x + x * scaledCellSize, gridRect.y + y * scaledCellSize, scaledCellSize, scaledCellSize);
                 EditorGUI.DrawRect(cellRect, color);
 
                 if ((Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseDrag) && cellRect.Contains(Event.current.mousePosition))
@@ -76,15 +94,15 @@ public class PixelEditor : EditorWindow
 
                 // Draw grid lines
                 Handles.color = Color.gray;
-                Handles.DrawLine(new Vector2(cellRect.x, cellRect.y), new Vector2(cellRect.x + cellSize, cellRect.y));
-                Handles.DrawLine(new Vector2(cellRect.x, cellRect.y), new Vector2(cellRect.x, cellRect.y + cellSize));
+                Handles.DrawLine(new Vector2(cellRect.x, cellRect.y), new Vector2(cellRect.x + scaledCellSize, cellRect.y));
+                Handles.DrawLine(new Vector2(cellRect.x, cellRect.y), new Vector2(cellRect.x, cellRect.y + scaledCellSize));
             }
         }
 
         // Bottom and right border lines
         Handles.DrawLine(
-            new Vector2(gridRect.x, gridRect.y + gridSize * cellSize),
-            new Vector2(gridRect.x + gridSize * cellSize, gridRect.y + gridSize * cellSize)
+            new Vector2(gridRect.x, gridRect.y + gridSize * scaledCellSize),
+            new Vector2(gridRect.x + gridSize * scaledCellSize, gridRect.y + gridSize * scaledCellSize)
         );
         Handles.DrawLine(
             new Vector2(gridRect.x + gridSize * cellSize, gridRect.y),
@@ -186,7 +204,6 @@ public class PixelEditor : EditorWindow
         }
 
         GUILayout.EndHorizontal();
-
     }
     
     private void SaveToPNG()
@@ -243,7 +260,18 @@ public class PixelEditor : EditorWindow
         Debug.Log($"Loaded PNG from: {path}");
     }
 
-
+    private void HandleZoomScroll()
+    {
+        Event e = Event.current;
+        if (e.type == EventType.ScrollWheel && e.control)
+        {
+            float scrollDelta = -e.delta.y; // Up = positive, Down = negative
+            zoom += scrollDelta * zoomStep * 0.1f;
+            zoom = Mathf.Clamp(zoom, minZoom, maxZoom);
+            e.Use(); // Prevent Unity from also scrolling the editor window
+            Repaint();
+        }
+    }
 }
 
 public enum EditorTool
