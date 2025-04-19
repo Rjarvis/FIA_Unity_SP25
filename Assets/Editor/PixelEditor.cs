@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
 
 public class PixelEditor : EditorWindow
 {
@@ -39,6 +40,7 @@ public class PixelEditor : EditorWindow
         DrawGrid();
         DrawColorField();
         DrawPaletteSwatches();
+        DrawSaveLoadButton();
     }
 
     private void DrawGrid()
@@ -136,7 +138,6 @@ public class PixelEditor : EditorWindow
         }
     }
 
-
     private int GetOrAddColorToPalette(Color color)
     {
         for (int i = 0; i < palette.Count; i++)
@@ -168,6 +169,81 @@ public class PixelEditor : EditorWindow
         Repaint();
         return result;
     }
+    
+    private void DrawSaveLoadButton()
+    {
+        GUILayout.Space(10);
+        GUILayout.BeginHorizontal();
+
+        if (GUILayout.Button("Save PNG"))
+        {
+            SaveToPNG();
+        }
+
+        if (GUILayout.Button("Load PNG"))
+        {
+            LoadFromPNG();
+        }
+
+        GUILayout.EndHorizontal();
+
+    }
+    
+    private void SaveToPNG()
+    {
+        string defaultDir = "Assets/PixelArt";
+        if (!Directory.Exists(defaultDir)) Directory.CreateDirectory(defaultDir);
+        
+        string path = EditorUtility.SaveFilePanel("Save Pixel Grid as PNG", "Assets/PixelArt", "pixel_art.png", "png");
+        if (string.IsNullOrEmpty(path)) return;
+
+        Texture2D texture = new Texture2D(gridSize, gridSize, TextureFormat.RGBA32, false);
+
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                int index = pixelGrid[x, y];
+                Color color = (index >= 0 && index < palette.Count) ? palette[index] : Color.clear;
+                texture.SetPixel(x, gridSize - y - 1, color); // Flip Y for correct display
+            }
+        }
+
+        texture.Apply();
+        byte[] pngData = texture.EncodeToPNG();
+
+        if (pngData != null)
+        {
+            File.WriteAllBytes(path, pngData);
+            AssetDatabase.Refresh();
+            Debug.Log($"Saved PNG to: {path}");
+        }
+    }
+    
+    private void LoadFromPNG()
+    {
+        string path = EditorUtility.OpenFilePanel("Load Pixel Grid from PNG", "Assets/PixelArt", "png");
+        if (string.IsNullOrEmpty(path)) return;
+
+        byte[] fileData = File.ReadAllBytes(path);
+        Texture2D texture = new Texture2D(gridSize, gridSize);
+        texture.LoadImage(fileData);
+
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                Color color = texture.GetPixel(x, gridSize - y - 1); // Flip Y back
+                int paletteIndex = GetOrAddColorToPalette(color);
+                pixelGrid[x, y] = paletteIndex;
+            }
+        }
+
+        Repaint();
+        Debug.Log($"Loaded PNG from: {path}");
+    }
+
+
 }
 
 public enum EditorTool
