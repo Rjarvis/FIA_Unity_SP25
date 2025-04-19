@@ -7,5 +7,6 @@ namespace Contexts
         public static Context UI = new Context();
         public static Context Physics = new Context();
         public static Context Input = new Context();
+        public static Context Level = new Context();
     }
 }

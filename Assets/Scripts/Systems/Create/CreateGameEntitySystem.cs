@@ -4,6 +4,7 @@ using Components.Health;
 using Contexts;
 using Helpers.Math;
 using Systems;
+using Systems.Level.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -59,6 +60,22 @@ namespace Systems.Create
             var levelComponent = level.AddComponent<LevelComponent>();
             levelComponent.Initialize(radius);
 
+            EntitySystem.NotifyComponentAdded(entityComponent, levelComponent);
+
+            return level;
+        }
+
+        public GameObject CreateLevelEntity(LevelData levelData)
+        {
+            GameObject level = new GameObject($"LevelEntity_{levelData.level}");
+            level.transform.position = Vector3.zero;
+
+            var entityComponent = level.AddComponent<EntityComponent>();
+            entityComponent.SetContext(GameContexts.Gameplay);
+
+            var levelComponent = level.AddComponent<LevelComponent>();
+            levelComponent.Initialize(levelData.radius);
+            
             EntitySystem.NotifyComponentAdded(entityComponent, levelComponent);
 
             return level;

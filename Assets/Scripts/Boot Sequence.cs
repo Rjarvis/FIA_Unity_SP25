@@ -39,6 +39,7 @@ public class BootSequence : MonoBehaviour
         GameContexts.UI = new Context();
         GameContexts.Physics = new Context();
         GameContexts.Input = new Context();
+        GameContexts.Level = new Context();
     }
 
     private void StartSystems()

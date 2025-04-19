@@ -61,9 +61,14 @@ namespace Systems
 
         private void CreateLevelEntity()
         {
-            Vector3 origin = new Vector3(Screen.width/2, Screen.height/2, 0);
-            entityCreator.CreateLevelEntity(origin, 1);
             entityCreator.CreateLevelEntity(Vector3.zero, 1);
+
+            var levelData = Helpers.Level.Level.GetLevelData();
+
+            foreach (var data in levelData)
+            {
+                entityCreator.CreateLevelEntity(data);
+            }
         }
 
         private void SpawnMultiEntities(GameObject buttonGameObject)
@@ -138,3 +143,4 @@ namespace Systems
         STRING
     }
 }
+
