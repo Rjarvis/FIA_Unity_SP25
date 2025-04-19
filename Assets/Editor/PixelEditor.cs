@@ -5,17 +5,22 @@ using System.IO;
 
 public class PixelEditor : EditorWindow
 {
-    private const int gridSize = 16; // 16x16 pixel grid
+    // private const int gridSize = 16; // 16x16 pixel grid
     private const int cellSize = 20; // Size of each pixel square
+    
+    private readonly int[] gridSizes = { 8, 16, 32, 64, 128 };
+    private int currentGridSizeIndex = 1; // Start at 16x16
+    private int gridSize => gridSizes[currentGridSizeIndex]; // Dynamic property for consistency
 
-    private int[,] pixelGrid = new int[gridSize, gridSize]; // Palette index grid
+
+    private int[,] pixelGrid = new int[16, 16]; // Palette index grid
     private List<Color> palette = new List<Color>(); // Dynamic palette
     private Color currentColor = Color.black;
     private int selectedPaletteIndex = -1;
     
     private float zoom = 1f;
     private float minZoom = 0.5f;
-    private float maxZoom = 3f;
+    private float maxZoom = 2.4f;
     private const float zoomStep = 0.1f;
 
 
@@ -48,7 +53,20 @@ public class PixelEditor : EditorWindow
         DrawPaletteSwatches();
         DrawSaveLoadButton();
         //Must be last-Experimental
-        //HandleZoomScroll();
+        DrawPixelGridScaler();
+        HandleZoomScrollv2();
+        HandleZoomScrollv1();
+    }
+
+    private void DrawPixelGridScaler()
+    {
+        GUILayout.Label($"Grid Size: {gridSize}x{gridSize}");
+        
+    }
+
+    private void UpdateGridSize()
+    {
+        pixelGrid = new int[gridSize, gridSize];
     }
 
     private void DrawGrid()
@@ -105,8 +123,8 @@ public class PixelEditor : EditorWindow
             new Vector2(gridRect.x + gridSize * scaledCellSize, gridRect.y + gridSize * scaledCellSize)
         );
         Handles.DrawLine(
-            new Vector2(gridRect.x + gridSize * cellSize, gridRect.y),
-            new Vector2(gridRect.x + gridSize * cellSize, gridRect.y + gridSize * cellSize)
+            new Vector2(gridRect.x + gridSize * scaledCellSize, gridRect.y),
+            new Vector2(gridRect.x + gridSize * scaledCellSize, gridRect.y + gridSize * scaledCellSize)
         );
     }
 
@@ -260,7 +278,50 @@ public class PixelEditor : EditorWindow
         Debug.Log($"Loaded PNG from: {path}");
     }
 
-    private void HandleZoomScroll()
+    private void ResizeGrid(int newSize)
+    {
+        int[,] newGrid = new int[newSize, newSize];
+
+        for (int y = 0; y < newSize; y++)
+        {
+            for (int x = 0; x < newSize; x++)
+            {
+                if (x < pixelGrid.GetLength(0) && y < pixelGrid.GetLength(1))
+                    newGrid[x, y] = pixelGrid[x, y];
+                else
+                    newGrid[x, y] = -1;
+            }
+        }
+
+        pixelGrid = newGrid;
+    }
+
+
+
+    private void HandleZoomScrollv2()
+    {
+        Event e = Event.current;
+        if (e.type == EventType.ScrollWheel)
+        {
+            float scroll = e.delta.y;
+
+            if (scroll > 0 && currentGridSizeIndex > 0)
+            {
+                currentGridSizeIndex--;
+                ResizeGrid(gridSizes[currentGridSizeIndex]);
+            }
+            else if (scroll < 0 && currentGridSizeIndex < gridSizes.Length - 1)
+            {
+                currentGridSizeIndex++;
+                ResizeGrid(gridSizes[currentGridSizeIndex]);
+            }
+
+            Repaint();
+            e.Use();
+        }
+    }
+
+    private void HandleZoomScrollv1()
     {
         Event e = Event.current;
         if (e.type == EventType.ScrollWheel && e.control)
@@ -272,6 +333,7 @@ public class PixelEditor : EditorWindow
             Repaint();
         }
     }
+
 }
 
 public enum EditorTool
