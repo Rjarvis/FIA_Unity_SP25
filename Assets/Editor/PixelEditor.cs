@@ -48,6 +48,7 @@ public class PixelEditor : EditorWindow
 
     private void OnGUI()
     {
+        GUILayout.Label($"Grid Size: {gridSize} x {gridSize}", EditorStyles.boldLabel);
         DrawGrid();
         DrawColorField();
         DrawPaletteSwatches();
@@ -226,7 +227,7 @@ public class PixelEditor : EditorWindow
     
     private void SaveToPNG()
     {
-        string defaultDir = "Assets/PixelArt";
+        string defaultDir = "Assets/StreamingAssets/PixelArt";
         if (!Directory.Exists(defaultDir)) Directory.CreateDirectory(defaultDir);
         
         string path = EditorUtility.SaveFilePanel("Save Pixel Grid as PNG", "Assets/PixelArt", "pixel_art.png", "png");
@@ -253,8 +254,20 @@ public class PixelEditor : EditorWindow
             AssetDatabase.Refresh();
             Debug.Log($"Saved PNG to: {path}");
         }
+
+        AutoImportAsTexture(path);
     }
-    
+
+    private void AutoImportAsTexture(string path)
+    {
+        TextureImporter importer = (TextureImporter)TextureImporter.GetAtPath(path);
+        if (importer != null)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.SaveAndReimport();
+        }
+    }
+
     private void LoadFromPNG()
     {
         string path = EditorUtility.OpenFilePanel("Load Pixel Grid from PNG", "Assets/PixelArt", "png");
@@ -295,8 +308,6 @@ public class PixelEditor : EditorWindow
 
         pixelGrid = newGrid;
     }
-
-
 
     private void HandleZoomScrollv2()
     {

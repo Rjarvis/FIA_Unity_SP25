@@ -2,6 +2,7 @@ using System.Linq;
 using Components;
 using Components.Health;
 using Contexts;
+using Helpers.Level;
 using Helpers.Math;
 using Systems;
 using Systems.Level.Data;
@@ -75,6 +76,9 @@ namespace Systems.Create
 
             var levelComponent = level.AddComponent<LevelComponent>();
             levelComponent.Initialize(levelData.radius);
+
+            var imageComponent = level.AddComponent<ImageComponent>();
+            imageComponent.Initialize(levelData.imagePath);
             
             EntitySystem.NotifyComponentAdded(entityComponent, levelComponent);
 

@@ -35,6 +35,7 @@ public class LevelDataEditor : EditorWindow
             levelList[i].radius = EditorGUILayout.FloatField("Radius", levelList[i].radius);
             levelList[i].enemySpawnRate = EditorGUILayout.FloatField("Enemy Spawn Rate (sec)", levelList[i].enemySpawnRate);
             levelList[i].totalEnemyCount = EditorGUILayout.IntField("Total Enemies", levelList[i].totalEnemyCount);
+            levelList[i].imagePath = EditorGUILayout.TextField("Image Path:", levelList[i].imagePath);
 
             if (GUILayout.Button("Remove Level"))
             {
@@ -90,6 +91,8 @@ public class LevelDataEditor : EditorWindow
             Debug.LogWarning("No LevelData.json found to load.");
         }
     }
+    
+    
 
     [System.Serializable]
     private class LevelDataWrapper

@@ -9,6 +9,7 @@ namespace Systems.Level.Data
         public float radius;
         public float enemySpawnRate;
         public int totalEnemyCount;
+        public string imagePath;
     }
 
     [System.Serializable]
