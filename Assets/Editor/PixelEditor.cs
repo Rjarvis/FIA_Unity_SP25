@@ -312,7 +312,7 @@ public class PixelEditor : EditorWindow
     private void HandleZoomScrollv2()
     {
         Event e = Event.current;
-        if (e.type == EventType.ScrollWheel)
+        if (e.type == EventType.ScrollWheel && e.control)
         {
             float scroll = e.delta.y;
 
@@ -335,7 +335,7 @@ public class PixelEditor : EditorWindow
     private void HandleZoomScrollv1()
     {
         Event e = Event.current;
-        if (e.type == EventType.ScrollWheel && e.control)
+        if (e.type == EventType.ScrollWheel)
         {
             float scrollDelta = -e.delta.y; // Up = positive, Down = negative
             zoom += scrollDelta * zoomStep * 0.1f;

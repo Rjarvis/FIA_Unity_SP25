@@ -61,10 +61,10 @@ namespace Systems
 
         private void CreateLevelEntity()
         {
-            entityCreator.CreateLevelEntity(Vector3.zero, 1);
-
+            //Get the Level Data
             var levelData = Helpers.Level.Level.GetLevelData();
 
+            //Iterate through the level data and CreateLevelEntity(data)
             foreach (var data in levelData)
             {
                 entityCreator.CreateLevelEntity(data);

@@ -2,17 +2,10 @@
     "levels": [
         {
             "level": 1,
-            "radius": 3.0,
+            "radius": 1.0,
             "enemySpawnRate": 2.0,
             "totalEnemyCount": 10,
-            "imagePath": "Assets/PixelArt/Earf.png"
-        },
-        {
-            "level": 2,
-            "radius": 3.0,
-            "enemySpawnRate": 2.0,
-            "totalEnemyCount": 10,
-            "imagePath": "Assets/PixelArt/moon_art.png"
+            "imagePath": "Assets/PixelArt/Earth.png"
         }
     ]
 }

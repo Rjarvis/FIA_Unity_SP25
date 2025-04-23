@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2643096cac6b43e408368123bf1a3d42
+guid: c0ec7d4956c98a540bbeb64dc8357a16
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3219727428931105228
-    second: Earf_0
+      213: 6423806749927177598
+    second: Earth_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Earf_0
+      name: Earth_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 16
-        height: 16
+        x: 1
+        y: 1
+        width: 125
+        height: 125
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cc1350ba905ceac20800000000000000
-      internalID: 3219727428931105228
+      spriteID: e7d7a2b4432f52950800000000000000
+      internalID: 6423806749927177598
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Earf_0: 3219727428931105228
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
