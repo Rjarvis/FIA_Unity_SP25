@@ -56,7 +56,7 @@ namespace Systems.Create
             level.transform.position = position;
 
             var entityComponent = level.AddComponent<EntityComponent>();
-            entityComponent.SetContext(GameContexts.Gameplay);
+            entityComponent.SetContext(GameContexts.Level);
 
             var levelComponent = level.AddComponent<LevelComponent>();
             levelComponent.Initialize(radius);
@@ -76,6 +76,7 @@ namespace Systems.Create
 
             var levelComponent = level.AddComponent<LevelComponent>();
             levelComponent.Initialize(levelData.radius);
+            levelComponent.SetContext(GameContexts.Level);
 
             var imageComponent = level.AddComponent<ImageComponent>();
             imageComponent.Initialize(levelData.imagePath);
@@ -103,7 +104,6 @@ namespace Systems.Create
             });
             if(entityToKill)
             {
-                
                 Destroy(entityToKill.gameObject);
             }
             else Debug.LogWarning($"{entityName} could not be found or killed!");

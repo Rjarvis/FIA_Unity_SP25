@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Components;
 using Contexts;
+using Helpers;
 using Helpers.Math;
 using Systems.Create;
 using TMPro;
@@ -37,24 +38,27 @@ namespace Systems
 
             foreach (Button button in buttons)
             {
-                if (button.gameObject.name.Contains("CreateEntity"))
+                string buttonName = button.gameObject.name;
+                switch (buttonName)
                 {
-                    button.onClick.AddListener(() => SpawnEntity());
-                }
-
-                if (button.gameObject.name.Contains("CreateLevelEntity"))
-                {
-                    button.onClick.AddListener(() => CreateLevelEntity());
-                }
-
-                if (button.gameObject.name.Contains("DestroyEntity"))
-                {
-                    button.onClick.AddListener(() => DeleteEntityLastEntity());
-                }
-
-                if (button.gameObject.name.Contains("Button_InputField"))
-                {
-                    button.onClick.AddListener(() => SpawnMultiEntities(button.gameObject));
+                    case UIButtonNames.CreateEntity:
+                        button.onClick.RemoveAllListeners();
+                        button.onClick.AddListener(() => SpawnEntity());
+                        break;
+                    case UIButtonNames.CreateLevelEntity:
+                        button.onClick.RemoveAllListeners();
+                        button.onClick.AddListener(() => CreateLevelEntity());
+                        break;
+                    case UIButtonNames.DestroyEntity:
+                        button.onClick.RemoveAllListeners();
+                        button.onClick.AddListener(() => DeleteEntityLastEntity());
+                        break;
+                    case UIButtonNames.ButtonInputField:
+                        button.onClick.RemoveAllListeners();
+                        button.onClick.AddListener(() => SpawnMultiEntities(button.gameObject));
+                        break;
+                    default : Debug.Log($"case not handled; buttonName: {buttonName}");
+                        return;
                 }
             }
         }
