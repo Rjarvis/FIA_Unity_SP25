@@ -152,6 +152,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiPrefab: {fileID: 6570975075046313416, guid: f30dca0766313524e851360b469fe5cf, type: 3}
   uiInstance: {fileID: 0}
+  playerPrefab: {fileID: 7984275095676107465, guid: 4a24e3e2d7e2a1147ab9f47847aa6828, type: 3}
+  crosshairPrefab: {fileID: 0}
 --- !u!4 &232660902
 Transform:
   m_ObjectHideFlags: 0

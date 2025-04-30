@@ -1,36 +1,34 @@
 using System;
 using System.Collections.Generic;
+using Interfaces;
 using UnityEngine;
 
-public class EntityComponent : MonoBehaviour
+public class EntityComponent : MonoBehaviour, IEntityComponent
 {
     private Context entityContext;
-    private readonly Dictionary<Type, object> components = new Dictionary<Type, object>();
-    
+    private readonly Dictionary<Type, object> components = new();
+
     public void SetContext(Context context)
     {
         entityContext = context;
-        context.AddEntity(this);//Adds the entity to the associated Context
+        context.AddEntity(this); // Register this entity with the context
     }
 
-    public Context GetContext()
+    public Context GetContext() => entityContext;
+
+    public void AddComponent<T>(T component) where T : class
     {
-        return entityContext;
+        components[typeof(T)] = component;
+        EntitySystem.NotifyComponentAdded(this, component);
     }
 
-    // public void AddComponent<T>(T component) where T : class
-    // {
-    //     components[typeof(T)] = component;
-    //     EntitySystem.NotifyComponentAdded(this, component);
-    // }
-    //
-    // public void RemoveComponent<T>() where T : class
-    // {
-    //     if (components.Remove(typeof(T), out var component))
-    //     {
-    //         EntitySystem.NotifyComponentRemoved(, component);
-    //     }
-    // }
+    public void RemoveComponent<T>() where T : class
+    {
+        if (components.Remove(typeof(T), out var component))
+        {
+            EntitySystem.NotifyComponentRemoved(this, component);
+        }
+    }
 
     public bool TryGetComponent<T>(out T component) where T : class
     {

@@ -4,6 +4,7 @@ using Base;
 using Interfaces;
 using Systems.Create;
 using Systems.Level.Data;
+using UnityEngine;
 
 namespace Systems.Level
 {
@@ -13,6 +14,8 @@ namespace Systems.Level
         private List<LevelData> levelData;
         private Context levelContext;
         private int levelIndex;
+        private GameObject levelCenterObj;
+        private GameObject currentLevel;
         
         public void Initialize(CreateGameEntitySystem createGameEntitySystem)
         {
@@ -23,10 +26,20 @@ namespace Systems.Level
             levelIndex = 0;
             var data = levelData[levelIndex];
             //CreateLevel initial
-            CreateLevel(data);
+            currentLevel = CreateLevel(data);
+            
+            //CreateLevelCenter and attach to entity;
+            var levelCenter = GameObject.FindGameObjectWithTag("LevelCenter");;
+            if (!levelCenter)
+            {
+                levelCenter = Resources.Load<GameObject>("Prefabs/LevelCenter");
+                levelCenterObj = Instantiate(levelCenter, currentLevel.transform, true);
+                // Debug.LogError("Level center not found. Add a GameObject with tag 'LevelCenter'.");
+                // return;
+            }
         }
 
-        public void CreateLevel(LevelData levelData) => entityCreator.CreateLevelEntity(levelData);
+        public GameObject CreateLevel(LevelData levelData) => entityCreator.CreateLevelEntity(levelData);
         
 
         public void UpdateSystem()

@@ -1,28 +1,27 @@
 using Components;
 using Contexts;
+using Interfaces;
 using UnityEngine;
 
 namespace Systems.Health
 {
-    public class GameplayHealthSystem : MonoBehaviour
+    public class GameplayHealthSystem : IUpdatable
     {
-        private void Update()
+        public void UpdateSystem()
         {
-            foreach (var health in GameContexts.Gameplay.GetAllComponents<HealthComponent>())
+            var healthEntities = GameContexts.Gameplay.GetEntitiesWithComponent<HealthComponent>();
+
+            foreach (var entity in healthEntities)
             {
-                if (health.Health <= 0)
+                if (entity.TryGetComponent<HealthComponent>(out var health))
                 {
-                    Debug.Log("Gameplay entity destroyed!");
-                    //Maybe add a deathComponent here to flag the system;
+                    if (health.Health <= 0)
+                    {
+                        Debug.Log($"Entity {entity} has died.");
+                        // Add death animation, remove entity, etc.
+                    }
                 }
-
-                health.Health--;
             }
-        }
-
-        public void Initialize()
-        {
-            
         }
     }
 }

@@ -5,6 +5,7 @@ using Interfaces;
 using Systems;
 using Systems.Create;
 using Systems.Health;
+using Systems.InputSystems;
 using Systems.Level;
 using Systems.Player;
 using Unity.VisualScripting;
@@ -17,6 +18,7 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     public GameObject uiPrefab;
     public GameObject uiInstance;
     public GameObject playerPrefab;
+    public GameObject crosshairPrefab;
     #endregion
     
     protected UISystem uiSystem;
@@ -54,7 +56,12 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     private void StartSystems()
     {
         RegisterSystems();
+        InitializeSystems();
         
+    }
+
+    private void InitializeSystems()
+    {
         // Ensure an instance of CreateGameEntitySystem exists
         GameObject createGameSystemObj = null;
         if (FindObjectOfType<CreateGameEntitySystem>() == null)
@@ -91,12 +98,11 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
         var playerCreateSystem = playerSystem.AddComponent<PlayerCreateSystem>();
         playerCreateSystem.Initialize();
         
-        // Initialize PlayerMoveSystem
-        var playerMoveSystem = FindFirstObjectByType<PlayerMovementSystem>();
-        if (playerMoveSystem == null)
-        {
-            playerMoveSystem = playerSystem.AddComponent<PlayerMovementSystem>();
-        }
+
+        // Initialize InputSystems
+        GameObject inputSystems = new GameObject("InputSystems");
+        var crosshairSystem = inputSystems.AddComponent<CrosshairSystem>();
+        crosshairSystem.Initialize(crosshairPrefab.GetComponent<RectTransform>(), Camera.main);
 
         //Register the playerData to the move system
         playerCreateSystem.RegisterPlayerDataToMoveSystem();
@@ -109,8 +115,6 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
             GameObject clickSystemObj = new GameObject("EntityClickSystem");
             clickSystemObj.AddComponent<EntityClickSystem>();
         }
-
-        
     }
 
     private void RegisterSystems()

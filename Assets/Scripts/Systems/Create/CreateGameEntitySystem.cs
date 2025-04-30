@@ -1,4 +1,5 @@
 using System.Linq;
+using Base;
 using Components;
 using Components.Health;
 using Contexts;
@@ -11,7 +12,7 @@ using UnityEngine.UI;
 
 namespace Systems.Create
 {
-    public class CreateGameEntitySystem : MonoBehaviour, ISystem
+    public class CreateGameEntitySystem : MonoBehaviourSingleton<CreateGameEntitySystem>, ISystem
     {
         protected int entityCount = 0;
 
@@ -125,19 +126,24 @@ namespace Systems.Create
 
         public void UpdateSequence()
         {
-            GetNewEntities();
-            MoveEntites();
-        }
-
-        private void MoveEntites()
-        {
             throw new System.NotImplementedException();
         }
 
-        private void GetNewEntities()
-        {
-            Contexts.GameContexts.Gameplay.GetAllComponents<AddHealthToEntityComponent>();
-        }
+        // public void UpdateSequence()
+        // {
+        //     GetNewEntities();
+        //     MoveEntites();
+        // }
+        //
+        // private void MoveEntites()
+        // {
+        //     throw new System.NotImplementedException();
+        // }
+        //
+        // private void GetNewEntities()
+        // {
+        //     var healthEntities = GameContexts.Gameplay.GetEntitiesWithComponent<AddHealthToEntityComponent>();
+        // }
 
         public void EndSequence()
         {

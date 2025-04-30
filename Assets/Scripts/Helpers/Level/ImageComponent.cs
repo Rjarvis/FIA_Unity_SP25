@@ -1,9 +1,10 @@
+using Interfaces;
 using UnityEditor;
 using UnityEngine;
 
 namespace Helpers.Level
 {
-    public class ImageComponent : MonoBehaviour
+    public class ImageComponent : EntityComponent
     {
         public void Initialize(string imagePath)
         {

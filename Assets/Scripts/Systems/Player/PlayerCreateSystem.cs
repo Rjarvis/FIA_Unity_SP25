@@ -49,6 +49,10 @@ namespace Systems.Player
 
             var imageComponent = playerInstance.AddComponent<ImageComponent>();
             imageComponent.Initialize(Helpers.Data.PlayerSpritePath);
+            imageComponent.SetContext(Contexts.GameContexts.Player);
+            var entityComponent = playerInstance.AddComponent<EntityComponent>();
+            entityComponent.SetContext(Contexts.GameContexts.Player);
+            EntitySystem.NotifyComponentAdded(entityComponent, imageComponent);
         }
 
         public void RegisterPlayerDataToMoveSystem()

@@ -1,42 +1,49 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Interfaces;
 
 public class Context
 {
-    private readonly Dictionary<Type, List<object>> components = new();
-    private readonly List<EntityComponent> entities = new();
+    private readonly List<IEntityComponent> entities = new();
 
-    public void AddEntity(EntityComponent entity)
+    public void AddEntity(IEntityComponent entity)
     {
-        entities.Add(entity);
+        if (!entities.Contains(entity))
+            entities.Add(entity);
     }
 
-    public void RemoveEntity(EntityComponent entity)
+    public void RemoveEntity(IEntityComponent entity)
     {
         entities.Remove(entity);
     }
 
-    // public void AddComponent<T>(EntityComponent entity, T component) where T : class
-    // {
-    //     if (!components.ContainsKey(typeof(T)))
-    //         components[typeof(T)] = new List<object>();
-    //
-    //     components[typeof(T)].Add(component);
-    //     EntitySystem.NotifyComponentAdded(entity, component);
-    // }
-    //
-    // public void RemoveComponent<T>(EntityComponent entity, T component) where T : class
-    // {
-    //     if (components.TryGetValue(typeof(T), out var list))
-    //     {
-    //         list.Remove(component);
-    //         EntitySystem.NotifyComponentRemoved(entity, component);
-    //     }
-    // }
+    public IReadOnlyList<IEntityComponent> GetAllEntities() => entities;
 
-    public List<T> GetAllComponents<T>() where T : class
+    // 🆕 Query all entities that have a specific component type
+    public List<IEntityComponent> GetEntitiesWithComponent<T>() where T : class
     {
-        return components.TryGetValue(typeof(T), out var list) ? list.ConvertAll(obj => obj as T) : new List<T>();
+        var results = new List<IEntityComponent>();
+        foreach (var entity in entities)
+        {
+            if (entity.TryGetComponent<T>(out _))
+            {
+                results.Add(entity);
+            }
+        }
+        return results;
+    }
+
+    // 🆕 Optional: Query all components of type T directly (e.g., HealthComponent)
+    public List<T> GetAllComponentsOfType<T>() where T : class
+    {
+        var results = new List<T>();
+        foreach (var entity in entities)
+        {
+            if (entity.TryGetComponent<T>(out var component))
+            {
+                results.Add(component);
+            }
+        }
+        return results;
     }
 }

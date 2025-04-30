@@ -2,7 +2,7 @@
     "levels": [
         {
             "level": 1,
-            "radius": 1.0,
+            "radius": 0.6499999761581421,
             "enemySpawnRate": 2.0,
             "totalEnemyCount": 10,
             "imagePath": "Assets/PixelArt/Earth.png"
