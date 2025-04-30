@@ -24,8 +24,8 @@ namespace Systems.Player
                 // return;
             }
 
-            // Load the PlayerPrefab from Resources folder
-            playerPrefab = Resources.Load<GameObject>("Prefabs/PlayerPrefab");  // Make sure it's under Assets/Resources/Prefabs
+            // Load the PlayerPrefab from the BootSequence or the Resources folder 
+            playerPrefab = BootSequence.Instance.playerPrefab ? BootSequence.Instance.playerPrefab : Resources.Load<GameObject>("Prefabs/PlayerPrefab");  
             if (!playerPrefab)
             {
                 Debug.LogError("PlayerPrefab not found in Resources/Prefabs.");
@@ -35,9 +35,16 @@ namespace Systems.Player
             // Instantiate player
             playerInstance = Instantiate(playerPrefab);
             playerInstance.name = "PlayerObject";
-
+            
+            var levelObj = GameObject.Find("LevelEntity_1");
+            if (!levelObj || !levelObj.TryGetComponent(out LevelComponent levelComponent))
+            {
+                Debug.LogError("Level entity with radius not found.");
+                return;
+            }
             // Set initial position at the orbit radius on x-axis
-            radius = GameObject.Find("LevelEntity_1").GetComponent<LevelComponent>().Radius;
+            radius = levelComponent.Radius;
+
             playerInstance.transform.position = centerObj.transform.position + new Vector3(radius, 0f, 0f);
 
             var imageComponent = playerInstance.AddComponent<ImageComponent>();

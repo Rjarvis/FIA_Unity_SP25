@@ -1,3 +1,4 @@
+using Base;
 using Components;
 using Contexts;
 using Interfaces;
@@ -10,12 +11,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class BootSequence : MonoBehaviour
+public class BootSequence : MonoBehaviourSingleton<BootSequence>
 {
-    [SerializeField] private GameObject uiPrefab;
-    private UISystem uiSystem;
-    private UIButtonListenerSystem uiButtonListenerSystem;
-    [SerializeField] private GameObject uiInstance;
+    #region GameObjects
+    public GameObject uiPrefab;
+    public GameObject uiInstance;
+    public GameObject playerPrefab;
+    #endregion
+    
+    protected UISystem uiSystem;
+    protected UIButtonListenerSystem uiButtonListenerSystem;
+    
 
     void Start()
     {
