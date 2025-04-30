@@ -57,7 +57,6 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     {
         RegisterSystems();
         InitializeSystems();
-        
     }
 
     private void InitializeSystems()
@@ -97,16 +96,17 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
         GameObject playerSystem = new GameObject("PlayerSystems");
         var playerCreateSystem = playerSystem.AddComponent<PlayerCreateSystem>();
         playerCreateSystem.Initialize();
-        
 
         // Initialize InputSystems
         GameObject inputSystems = new GameObject("InputSystems");
         var crosshairSystem = inputSystems.AddComponent<CrosshairSystem>();
-        crosshairSystem.Initialize(crosshairPrefab.GetComponent<RectTransform>(), Camera.main);
+        var crosshairInst = Instantiate(crosshairPrefab);
+        crosshairInst.transform.parent = uiInstance.transform;
+        var rectTransform = crosshairInst.GetComponent<RectTransform>();
+        crosshairSystem.Initialize(rectTransform, Camera.main);
 
         //Register the playerData to the move system
         playerCreateSystem.RegisterPlayerDataToMoveSystem();
-
 
         // Find EntityClickSystem and assign it
         EntityClickSystem clickSystem = FindObjectOfType<EntityClickSystem>();
@@ -126,6 +126,7 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
         EntitySystem.RegisterSystem<GameplayHealthSystem>(GameContexts.Gameplay);
         EntitySystem.RegisterSystem<PlayerCreateSystem>(GameContexts.Player);
         EntitySystem.RegisterSystem<PlayerMovementSystem>(GameContexts.Player);
+        EntitySystem.RegisterSystem<CrosshairSystem>(GameContexts.Input);
     }
 
     private void UpdateSystems()
@@ -137,11 +138,13 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     {
         Debug.Log("Shutting down systems...");
         
+        EntitySystem.UnRegisterSystem<EntityClickSystem>(GameContexts.Input);
+        EntitySystem.UnRegisterSystem<CreateGameEntitySystem>(GameContexts.Create);
         EntitySystem.UnRegisterSystem<UISystem>(GameContexts.UI);
         EntitySystem.UnRegisterSystem<UIButtonListenerSystem>(GameContexts.UI);
         EntitySystem.UnRegisterSystem<GameplayHealthSystem>(GameContexts.Gameplay);
+        EntitySystem.UnRegisterSystem<PlayerCreateSystem>(GameContexts.Player);
+        EntitySystem.UnRegisterSystem<PlayerMovementSystem>(GameContexts.Player);
+        EntitySystem.UnRegisterSystem<CrosshairSystem>(GameContexts.Input);
     }
 }
-
-
-

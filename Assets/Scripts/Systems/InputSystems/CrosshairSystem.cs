@@ -26,10 +26,10 @@ namespace Systems.InputSystems
             Vector3 mousePosition = UnityEngine.InputSystem.Mouse.current.position.value;
 
             // Position UI crosshair in screen space
-            crosshairUI.position = mousePosition;
+            Instance.crosshairUI.position = mousePosition;
 
             // Optional: debug raycast into world
-            Ray ray = mainCamera.ScreenPointToRay(mousePosition);
+            Ray ray = Instance.mainCamera.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
                 Debug.DrawLine(ray.origin, hit.point, Color.red);
