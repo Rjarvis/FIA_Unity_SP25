@@ -93,23 +93,15 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
         levelCreateSystem.Initialize(entityCreator);
         
         // Initialize PlayerCreateSystem
-        GameObject playerSystem = new GameObject("PlayerSystems");
-        var playerCreateSystem = playerSystem.AddComponent<PlayerCreateSystem>();
-        playerCreateSystem.Initialize();
-
-        // Initialize InputSystems
-        GameObject inputSystems = new GameObject("InputSystems");
-        var crosshairSystem = inputSystems.AddComponent<CrosshairSystem>();
-        var crosshairInst = Instantiate(crosshairPrefab);
-        crosshairInst.transform.parent = uiInstance.transform;
-        var rectTransform = crosshairInst.GetComponent<RectTransform>();
-        crosshairSystem.Initialize(rectTransform, Camera.main);
+        PlayerCreateSystem playerCreateSystem = Systems.Player.Initial.InitializePlayerCreateSystems.Instance.Initialize();
+        // Initialize CrosshairSystem
+        Systems.InputSystems.Initial.InitializeInputSytems.Instance.InitializeInputSystems(crosshairPrefab, uiInstance);
 
         //Register the playerData to the move system
         playerCreateSystem.RegisterPlayerDataToMoveSystem();
 
         // Find EntityClickSystem and assign it
-        EntityClickSystem clickSystem = FindObjectOfType<EntityClickSystem>();
+        EntityClickSystem clickSystem = FindFirstObjectByType<EntityClickSystem>();
         if (clickSystem == null)
         {
             GameObject clickSystemObj = new GameObject("EntityClickSystem");
