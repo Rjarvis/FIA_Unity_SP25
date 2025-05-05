@@ -7,26 +7,22 @@ using Systems.InputSystems;
 using Systems.Level;
 using Systems.Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Systems
 {
     public class SystemController : MonoBehaviour
     {
-        public BulletSystem BulletSystem;
-        public ShootingSystem ShootingSystem;
-        public PlayerMovementSystem MovementSystem;
-        public CrosshairSystem CrosshairSystem;
-        public PlayerCreateSystem PlayerCreateSystem;
-        public LevelCreateSystem LevelCreateSystem;
-        public UIButtonListenerSystem UIButtonListenerSystem;
-        public UISystem UISystem;
+        public BulletSystem bulletSystem;
+        public ShootingSystem shootingSystem;
+        public PlayerMovementSystem movementSystem;
+        public CrosshairSystem crosshairSystem;
+        public PlayerCreateSystem playerCreateSystem;
+        public LevelCreateSystem levelCreateSystem;
+        public UIButtonListenerSystem uiButtonListenerSystem;
+        public UISystem uiSystem;
 
         public void UpdateSystems() => EntitySystem.Update();
-
-        public void Update()
-        {
-            UpdateSystems();
-        }
 
         public void ShutdownSystems()
         {
@@ -68,7 +64,7 @@ namespace Systems
                 uiSystem.Initialize(uiPrefab);
                 EntitySystem.RegisterSystem(GameContexts.UI, uiSystem);
                 uiInstance = uiSystem.GetInstance();
-                UISystem = uiSystem;
+                this.uiSystem = uiSystem;
                 
                 // Initialize button events
                 uiButtonListenerSystem = FindFirstObjectByType<UIButtonListenerSystem>();
@@ -76,7 +72,7 @@ namespace Systems
                 {
                     uiButtonListenerSystem.Initialize(uiInstance, entityCreator);
                     EntitySystem.RegisterSystem(GameContexts.UI, uiButtonListenerSystem);
-                    UIButtonListenerSystem = uiButtonListenerSystem;
+                    this.uiButtonListenerSystem = uiButtonListenerSystem;
                 }
             }
             else
@@ -89,20 +85,20 @@ namespace Systems
             var levelCreateSystem = levelCreateObj.AddComponent<LevelCreateSystem>();
             levelCreateSystem.Initialize(entityCreator);
             EntitySystem.RegisterSystem(GameContexts.Gameplay, levelCreateSystem);
-            LevelCreateSystem = levelCreateSystem;
+            this.levelCreateSystem = levelCreateSystem;
             
             // Initialize PlayerCreateSystem
             PlayerCreateSystem playerCreateSystem = Systems.Player.Initial.InitializePlayerCreateSystems.Instance.Initialize();
             EntitySystem.RegisterSystem(GameContexts.Player, playerCreateSystem);
-            PlayerCreateSystem = playerCreateSystem;
-            
+            this.playerCreateSystem = playerCreateSystem;
+
             // Initialize CrosshairSystem
-            CrosshairSystem = InputSystems.Initial.InitializeInputSystems.Instance.Initialize(crosshairPrefab, uiInstance);
+            crosshairSystem = InputSystems.Initial.InitializeInputSystems.Instance.Initialize(crosshairPrefab, uiInstance);
 
 
             //Register the playerData to the move system
             playerCreateSystem.RegisterPlayerDataToMoveSystem();
-            MovementSystem = PlayerMovementSystem.Instance;
+            movementSystem = PlayerMovementSystem.Instance;
 
             // Find EntityClickSystem and assign it
             EntityClickSystem clickSystem = FindFirstObjectByType<EntityClickSystem>();
@@ -114,15 +110,15 @@ namespace Systems
             }
             
             GameObject shootingSystemObj = new GameObject("ShootingSystem");
-            ShootingSystem = shootingSystemObj.AddComponent<ShootingSystem>();
-            BulletSystem = shootingSystemObj.AddComponent<BulletSystem>();
+            shootingSystem = shootingSystemObj.AddComponent<ShootingSystem>();
+            bulletSystem = shootingSystemObj.AddComponent<BulletSystem>();
             
             var crosshairTransform = CrosshairSystem.Instance.crosshairUI;
-            ShootingSystem.Initialize(Camera.main, crosshairTransform, bulletPrefab);
+            shootingSystem.Initialize(Camera.main, crosshairTransform, bulletPrefab);
             
-            EntitySystem.RegisterSystem(GameContexts.Player, ShootingSystem);
-            EntitySystem.RegisterSystem(GameContexts.Physics, BulletSystem);
-            EntitySystem.RegisterSystem(GameContexts.UI, CrosshairSystem);
+            EntitySystem.RegisterSystem(GameContexts.Player, shootingSystem);
+            EntitySystem.RegisterSystem(GameContexts.Physics, bulletSystem);
+            EntitySystem.RegisterSystem(GameContexts.UI, crosshairSystem);
         }
     }
 }

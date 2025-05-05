@@ -57,11 +57,16 @@ namespace Systems.Player
             var entityComponent = playerInstance.AddComponent<EntityComponent>();
             entityComponent.SetContext(Contexts.GameContexts.Player);
             
-            var playerComponent = playerInstance.AddComponent<PlayerComponent>();
-            playerComponent.Level = 0;
-            playerComponent.SetContext(Contexts.GameContexts.Player);
+            // Create and attach ECS-style data component
+            var playerComponent = new PlayerComponent { Level = 0 };
+            entityComponent.SetContext(Contexts.GameContexts.Player);
+            entityComponent.AddComponent(playerComponent);
 
-            var shootComponent = playerInstance.AddComponent<ShootComponent>();
+
+            var shootComponent = new ShootComponent { cooldownTime = 3f, lastShotTime = 0f};
+            shootComponent.SetContext(GameContexts.Player);
+            shootComponent.cooldownTime = 3f;
+            shootComponent.lastShotTime = 0f;
             
             EntitySystem.NotifyComponentAdded(entityComponent, shootComponent);
             EntitySystem.NotifyComponentAdded(entityComponent, playerComponent);

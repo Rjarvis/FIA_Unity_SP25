@@ -24,8 +24,11 @@ namespace Systems.Player
         {
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                // Debug.Log("<color=red>Got Here</color>");
-                var playerEntities = GameContexts.Player.GetEntitiesWithComponent<ShootComponent>();
+                Debug.Log("<color=red>Got Here</color>");
+                // FireBullet();
+                var playerEntities = GameContexts.Player.GetEntitiesWithComponent<PlayerComponent>();
+                Debug.Log($"<color=blue>playerEntities.Count: {playerEntities.Count}</color>");
+
                 foreach (var entity in playerEntities)
                 {
                     if (entity.TryGetComponent<ShootComponent>(out var shootComponent))
@@ -41,6 +44,11 @@ namespace Systems.Player
                     }
                 }
             }
+        }
+
+        private void FireBullet()
+        {
+            var bullet = GameObject.Instantiate(bulletPrefab, crosshairTransform.position, crosshairTransform.rotation);
         }
 
         private void SpawnBullet(IEntityComponent player)

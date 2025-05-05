@@ -20,9 +20,9 @@ public class Context
     public IReadOnlyList<IEntityComponent> GetAllEntities() => entities;
 
     // 🆕 Query all entities that have a specific component type
-    public List<IEntityComponent> GetEntitiesWithComponent<T>() where T : class
+    public List<EntityComponent> GetEntitiesWithComponent<T>() where T : class
     {
-        var results = new List<IEntityComponent>();
+        var results = new List<EntityComponent>();
         foreach (var entity in entities)
         {
             if (entity.TryGetComponent<T>(out _))
@@ -32,6 +32,7 @@ public class Context
         }
         return results;
     }
+
 
     // 🆕 Optional: Query all components of type T directly (e.g., HealthComponent)
     public List<T> GetAllComponentsOfType<T>() where T : class
