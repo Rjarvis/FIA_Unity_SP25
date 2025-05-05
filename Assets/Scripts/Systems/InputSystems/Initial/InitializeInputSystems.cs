@@ -4,14 +4,9 @@ using UnityEngine;
 
 namespace Systems.InputSystems.Initial
 {
-    public class InitializeInputSytems : MonoBehaviourSingleton<InitializeInputSytems>
+    public class InitializeInputSystems : MonoBehaviourSingleton<InitializeInputSystems>
     {
-        public void InitializeInputSystems()
-        {
-        }
-
-
-        public void InitializeInputSystems(GameObject crosshairPrefab, GameObject uiInstance)
+        public CrosshairSystem Initialize(GameObject crosshairPrefab, GameObject uiInstance)
         {
             // Initialize InputSystems
             GameObject inputSystems = new GameObject("InputSystems");
@@ -19,6 +14,7 @@ namespace Systems.InputSystems.Initial
             var crosshairInst = Instantiate(crosshairPrefab, uiInstance.transform, true);
             var rectTransform = crosshairInst.GetComponent<RectTransform>();
             crosshairSystem.Initialize(rectTransform, Camera.main);
+            return crosshairSystem;
         }
     }
 }

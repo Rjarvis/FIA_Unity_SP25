@@ -2,9 +2,11 @@ namespace Components.InputComponents
 {
     public class InputComponent : EntityComponent
     {
-        public void Initialize()
-        {
-            
-        }
+    }
+
+    public class ShootComponent : EntityComponent
+    {
+        public float cooldownTime;
+        public float lastShotTime;
     }
 }

@@ -8,26 +8,44 @@ using UnityEngine;
 public static class EntitySystem
 {
     internal static readonly Dictionary<Context, List<object>> systemComponents = new();
+    internal static readonly Dictionary<Context, Dictionary<Type, List<IEntityComponent>>> componentRegistry = new();
 
-    public static void RegisterSystem<T>(Context context) where T : class, new()
+
+    public static void RegisterSystem<T>(Context context, T obj) where T : class
     {
         if (!systemComponents.ContainsKey(context))
         {
             systemComponents[context] = new List<object>();
         }
 
-        T systemInstance = new T();
-        systemComponents[context].Add(systemInstance);
+        if (systemComponents[context].Any(x => x is T)) return; // Already registered
+
+        systemComponents[context].Add(obj);
     }
-    
+
     public static void UnRegisterSystem<T>(Context context) where T : class
     {
         if (systemComponents.ContainsKey(context))
         {
             systemComponents[context].RemoveAll(system => system is T);
+            Debug.Log($"[EntitySystem] Unregistered system of type {typeof(T).Name} from {context.GetType().Name}");
         }
     }
+
     
+    public static Context CreateAndRegisterContext()
+    {
+        var context = new Context();
+        systemComponents[context] = new List<object>();
+        componentRegistry[context] = new Dictionary<Type, List<IEntityComponent>>();
+        return context;
+    }
+
+    public static void UnRegisterContext(Context context)
+    {
+        if (systemComponents.ContainsKey(context)) systemComponents[context].Clear();
+    }
+
     public static void NotifyEntityCreated(EntityComponent entity)
     {
         Debug.Log($"Entity {entity.gameObject.name} created, notifying systems.");
@@ -47,19 +65,50 @@ public static class EntitySystem
     
     public static void NotifyComponentAdded<T>(EntityComponent entity, T component) where T : class
     {
-        if (systemComponents.TryGetValue(entity.GetContext(), out var list) == false)
+        var context = entity.GetContext();
+        if (!componentRegistry.TryGetValue(context, out var componentMap))
         {
-            list.Add(component);
+            componentMap = new Dictionary<Type, List<IEntityComponent>>();
+            componentRegistry[context] = componentMap;
+        }
+
+        var type = typeof(T);
+        if (!componentMap.TryGetValue(type, out var list))
+        {
+            list = new List<IEntityComponent>();
+            componentMap[type] = list;
+        }
+
+        if (!list.Contains(entity))
+            list.Add(entity);
+    }
+
+    
+    public static void NotifyComponentRemoved<T>(EntityComponent entity, T component) where T : class
+    {
+        var context = entity.GetContext();
+        if (componentRegistry.TryGetValue(context, out var componentMap))
+        {
+            var type = typeof(T);
+            if (componentMap.TryGetValue(type, out var list))
+            {
+                list.Remove(entity);
+            }
         }
     }
     
-    public static void NotifyComponentRemoved<T>(EntityComponent entity,T component) where T : class
+    public static List<IEntityComponent> GetEntitiesWithComponent<T>(Context context) where T : class
     {
-        if (systemComponents.TryGetValue(entity.GetContext(), out var list))
+        if (componentRegistry.TryGetValue(context, out var componentMap) &&
+            componentMap.TryGetValue(typeof(T), out var list))
         {
-            list.Remove(component);
+            return list;
         }
+
+        return new List<IEntityComponent>();
     }
+
+
 
     public static List<T> GetAllComponents<T>(Context context) where T : class
     {

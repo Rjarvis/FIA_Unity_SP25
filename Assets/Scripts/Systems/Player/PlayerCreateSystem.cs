@@ -1,5 +1,8 @@
 using System;
 using Base;
+using Components;
+using Components.InputComponents;
+using Contexts;
 using Helpers.Level;
 using Interfaces;
 using UnityEngine;
@@ -50,18 +53,33 @@ namespace Systems.Player
             var imageComponent = playerInstance.AddComponent<ImageComponent>();
             imageComponent.Initialize(Helpers.Data.PlayerSpritePath);
             imageComponent.SetContext(Contexts.GameContexts.Player);
+            
             var entityComponent = playerInstance.AddComponent<EntityComponent>();
             entityComponent.SetContext(Contexts.GameContexts.Player);
+            
+            var playerComponent = playerInstance.AddComponent<PlayerComponent>();
+            playerComponent.Level = 0;
+            playerComponent.SetContext(Contexts.GameContexts.Player);
+
+            var shootComponent = playerInstance.AddComponent<ShootComponent>();
+            
+            EntitySystem.NotifyComponentAdded(entityComponent, shootComponent);
+            EntitySystem.NotifyComponentAdded(entityComponent, playerComponent);
             EntitySystem.NotifyComponentAdded(entityComponent, imageComponent);
+            
         }
 
         public void RegisterPlayerDataToMoveSystem()
         {
             // Register data to movement system
             var moveSystem = PlayerMovementSystem.Instance;
+            moveSystem.gameObject.transform.SetParent(this.gameObject.transform);
             moveSystem.PlayerTransform = playerInstance;
             moveSystem.CenterPoint = centerObj;
             moveSystem.radius = radius;
+            moveSystem.Initialize();
+            
+            EntitySystem.RegisterSystem(GameContexts.Player, moveSystem);
         }
 
 
