@@ -20,9 +20,9 @@ public class Context
     public IReadOnlyList<IEntityComponent> GetAllEntities() => entities;
 
     // 🆕 Query all entities that have a specific component type
-    public List<EntityComponent> GetEntitiesWithComponent<T>() where T : class
+    public List<IEntityComponent> GetEntitiesWithComponent<T>() where T : class
     {
-        var results = new List<EntityComponent>();
+        var results = new List<IEntityComponent>();
         foreach (var entity in entities)
         {
             if (entity.TryGetComponent<T>(out _))

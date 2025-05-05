@@ -5,6 +5,7 @@ using Components.InputComponents;
 using Contexts;
 using Helpers.Level;
 using Interfaces;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Systems.Player
@@ -67,6 +68,7 @@ namespace Systems.Player
             shootComponent.SetContext(GameContexts.Player);
             shootComponent.cooldownTime = 3f;
             shootComponent.lastShotTime = 0f;
+            entityComponent.AddComponent(shootComponent);
             
             EntitySystem.NotifyComponentAdded(entityComponent, shootComponent);
             EntitySystem.NotifyComponentAdded(entityComponent, playerComponent);
