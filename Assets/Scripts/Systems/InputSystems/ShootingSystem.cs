@@ -67,7 +67,7 @@ namespace Systems.Player
             var bulletEntity = bulletGO.AddComponent<EntityComponent>();
             bulletEntity.SetContext(GameContexts.Gameplay);
 
-            var bulletComponent = new BulletComponent() { direction = direction, speed = 50 };
+            var bulletComponent = new BulletComponent() { direction = direction, speed = 50f };
             bulletComponent.SetContext(GameContexts.Gameplay);
             bulletEntity.AddComponent(bulletComponent);
             EntitySystem.NotifyComponentAdded(bulletEntity, bulletComponent);

@@ -21,12 +21,8 @@ namespace Systems.Player
         {
             // Find level center
             centerObj = GameObject.FindGameObjectWithTag("LevelCenter");
-            if (!centerObj)
-            {
-                centerObj = Resources.Load<GameObject>("Prefabs/LevelCenter");
-                // Debug.LogError("Level center not found. Add a GameObject with tag 'LevelCenter'.");
-                // return;
-            }
+            if (!centerObj) centerObj = Resources.Load<GameObject>("Prefabs/LevelCenter");
+            
 
             // Load the PlayerPrefab from the BootSequence or the Resources folder 
             playerPrefab = BootSequence.Instance.playerPrefab ? BootSequence.Instance.playerPrefab : Resources.Load<GameObject>("Prefabs/PlayerPrefab");  
@@ -48,13 +44,14 @@ namespace Systems.Player
             }
             // Set initial position at the orbit radius on x-axis
             radius = levelComponent.Radius;
-
             playerInstance.transform.position = centerObj.transform.position + new Vector3(radius, 0f, 0f);
 
+            // Set the image component to the player object
             var imageComponent = playerInstance.AddComponent<ImageComponent>();
             imageComponent.Initialize(Helpers.Data.PlayerSpritePath);
             imageComponent.SetContext(Contexts.GameContexts.Player);
             
+            // Add the EntityComponent to the player obj
             var entityComponent = playerInstance.AddComponent<EntityComponent>();
             entityComponent.SetContext(Contexts.GameContexts.Player);
             
@@ -70,10 +67,10 @@ namespace Systems.Player
             shootComponent.lastShotTime = 0f;
             entityComponent.AddComponent(shootComponent);
             
+            // Notify the EntitySystem
             EntitySystem.NotifyComponentAdded(entityComponent, shootComponent);
             EntitySystem.NotifyComponentAdded(entityComponent, playerComponent);
             EntitySystem.NotifyComponentAdded(entityComponent, imageComponent);
-            
         }
 
         public void RegisterPlayerDataToMoveSystem()
