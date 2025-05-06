@@ -46,11 +46,6 @@ namespace Systems.Player
             }
         }
 
-        private void FireBullet()
-        {
-            var bullet = GameObject.Instantiate(bulletPrefab, crosshairTransform.position, crosshairTransform.rotation);
-        }
-
         private void SpawnBullet(IEntityComponent player)
         {
             var playerTransform = player.GetTransform();
@@ -72,7 +67,10 @@ namespace Systems.Player
             var bulletEntity = bulletGO.AddComponent<EntityComponent>();
             bulletEntity.SetContext(GameContexts.Gameplay);
 
-            bulletEntity.AddComponent(bulletGO.AddComponent<BulletComponent>());
+            var bulletComponent = new BulletComponent() { direction = direction, speed = 50 };
+            bulletComponent.SetContext(GameContexts.Gameplay);
+            bulletEntity.AddComponent(bulletComponent);
+            EntitySystem.NotifyComponentAdded(bulletEntity, bulletComponent);
         }
     }
 }
