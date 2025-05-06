@@ -48,6 +48,7 @@ namespace Systems.Player
 
         private void SpawnBullet(IEntityComponent player)
         {
+            // Get the player's position;
             var playerTransform = player.GetTransform();
             
             // Get world point under crosshair
