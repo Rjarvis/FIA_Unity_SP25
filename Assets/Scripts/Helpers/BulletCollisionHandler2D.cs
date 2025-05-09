@@ -7,17 +7,15 @@ namespace Helpers
     {
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            // Debug.Log($"<color=lime>{gameObject.name}</color>" +
-            //           $"<b>hit</b> " +
-            //           $"<color=pink>{collision.collider.gameObject.name}</color>{collision.collider.gameObject.name}");
-            var otherColliderLevelComponent= collision.gameObject.GetComponent<LevelComponent>();
-            bool containsEntity = GameContexts.Level.ContainsEntity(otherColliderLevelComponent);
-            if (containsEntity)
-            {
-                Debug.Log("<color=green>Got Here</color>");
-                return;
-            }
+            if (GameContexts.Level.ContainsEntity(collision.gameObject.GetComponent<LevelComponent>())) return;
+
             var entityComponent = gameObject.GetComponent<EntityComponent>();
+            if (!entityComponent) return;
+            RemoveAndDestroyEntity(entityComponent);
+        }
+
+        private void RemoveAndDestroyEntity(EntityComponent entityComponent)
+        {
             GameContexts.Gameplay.RemoveEntity(entityComponent);
             Destroy(gameObject, 0.01f);
         }

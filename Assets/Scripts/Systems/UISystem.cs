@@ -57,9 +57,6 @@ namespace Systems
             }
         }
 
-        public GameObject GetInstance()
-        {
-            return uiInstance;
-        }
+        public GameObject GetInstance() => uiInstance;
     }
 }

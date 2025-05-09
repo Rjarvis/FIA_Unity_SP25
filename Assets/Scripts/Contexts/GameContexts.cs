@@ -9,5 +9,6 @@ namespace Contexts
         public static Context Input { get; set; }
         public static Context Level { get; set; }
         public static Context Player { get; set; }
+        public static Context Alien { get; set; }
     }
 }

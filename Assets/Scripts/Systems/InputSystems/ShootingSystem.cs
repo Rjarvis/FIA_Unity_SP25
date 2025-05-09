@@ -26,30 +26,15 @@ namespace Systems.Player
         {
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                // #if DEBUG
-                // Debug.Log("<color=red>Got Here</color>");
-                // #endif
                 var playerEntities = GameContexts.Player.GetEntitiesWithComponent<PlayerComponent>();
                 foreach (var entity in playerEntities)
                 {
                     if (entity.TryGetComponent<ShootComponent>(out var shootComponent))
                     {
-                        // #if DEBUG
-                        // Debug.Log("<color=yellow>Got Here</color>");
-                        // #endif
-                        // Debug.Log($"<color=teal>Time.time:{Time.time};" +
-                        //           $"Time.deltaTime:{Time.deltaTime}; " +
-                        //           $"shootComponent.lastShotTime:{shootComponent.lastShotTime}" +
-                        //           $"Time.time - shootComponent.lastShotTime:{Time.time - shootComponent.lastShotTime};" +
-                        //           $"shootComponent.cooldownTime:{shootComponent.cooldownTime}</color>");
                         if (Time.time - shootComponent.lastShotTime > shootComponent.cooldownTime)
                         {
-                            // #if DEBUG
-                            // Debug.Log("<color=green>Got Here</color>");
-                            // #endif
                             shootComponent.lastShotTime = Time.time;
                             SpawnBullet(entity);
-                            // Debug.Log("Shot a bullet");
                         }
                     }
                 }
@@ -67,19 +52,17 @@ namespace Systems.Player
                 ? hit.point
                 : ray.origin + ray.direction * 100f;
 
-            // Ignore Z for 2D — flatten to XY plane
-            // Need to think through getting the revolving position that would appear above the playerObj head
-            // For instance the player is at the 12 o'clock position then the startPos needs to be about 1.5 units
-            // in the y postition. But, in the 3 or 9 o'clock position it would need to add or subtract from the
-            // x-position respectively.
-            // Maybe using the playerTransform.rotation.z could inform us how we could determine this
-            // Maybe something like...
-
             Vector2 playerPos = new Vector2(playerTransform.position.x, playerTransform.position.y);
             Vector2 targetPos = new Vector2(targetPoint.x, targetPoint.y);
             Vector2 direction = (targetPos - playerPos).normalized;
 
-            var bulletGO = GameObject.Instantiate(bulletPrefab, playerPos, Quaternion.identity);
+            // V2
+            // Vector2 offset = direction * 1.5f;
+            // Vector2 spawnPos = playerPos + offset;
+            // var bulletGO = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+            
+            // V1
+            var bulletGO = Instantiate(bulletPrefab, playerPos, Quaternion.identity);
 
             // ECS-style entity wrapping
             var bulletEntity = bulletGO.AddComponent<EntityComponent>();

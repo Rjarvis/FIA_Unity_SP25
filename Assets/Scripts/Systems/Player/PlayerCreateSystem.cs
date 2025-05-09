@@ -1,11 +1,9 @@
-using System;
 using Base;
 using Components;
 using Components.InputComponents;
 using Contexts;
 using Helpers.Level;
 using Interfaces;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Systems.Player
@@ -75,7 +73,7 @@ namespace Systems.Player
         {
             // Register data to movement system
             var moveSystem = PlayerMovementSystem.Instance;
-            moveSystem.gameObject.transform.SetParent(this.gameObject.transform);
+            moveSystem.gameObject.transform.SetParent(gameObject.transform);
             moveSystem.PlayerTransform = playerInstance;
             moveSystem.CenterPoint = centerObj;
             moveSystem.radius = radius;

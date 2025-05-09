@@ -1,18 +1,7 @@
-using System;
 using Base;
-using Components;
-using Components.InputComponents;
 using Contexts;
-using Interfaces;
 using Systems;
-using Systems.Create;
-using Systems.Health;
-using Systems.InputSystems;
-using Systems.Level;
-using Systems.Player;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class BootSequence : MonoBehaviourSingleton<BootSequence>
 {
@@ -20,7 +9,6 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     
     #region GameObjects
     public GameObject uiPrefab;
-    public GameObject uiInstance;
     public GameObject playerPrefab;
     public GameObject crosshairPrefab;
     public GameObject bulletPrefab;
@@ -36,10 +24,10 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     {
         InitializeContexts();
         systemController = gameObject.AddComponent<SystemController>();
+        uiSystem = gameObject.GetComponent<UISystem>();
+        uiButtonListenerSystem = gameObject.GetComponent<UIButtonListenerSystem>();
         systemController.InitializeSystems(
             uiPrefab,
-            uiInstance,
-            playerPrefab,
             crosshairPrefab,
             bulletPrefab,
             uiSystem,
@@ -67,5 +55,6 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
         GameContexts.Input = EntitySystem.CreateAndRegisterContext();
         GameContexts.Level = EntitySystem.CreateAndRegisterContext();
         GameContexts.Player = EntitySystem.CreateAndRegisterContext();
+        GameContexts.Alien = EntitySystem.CreateAndRegisterContext();
     }
 }
