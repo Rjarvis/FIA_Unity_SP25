@@ -8,9 +8,9 @@ public class EntityComponent : MonoBehaviour, IEntityComponent
     private Context entityContext;
     private readonly Dictionary<Type, object> components = new();
 
-    public GameObject GetGameObject() => gameObject;
+    public GameObject GetGameObject() => gameObject ? gameObject : null;
 
-    public Transform GetTransform() => transform;
+    public Transform GetTransform() => transform ? transform : null;
 
     public void SetContext(Context context)
     {

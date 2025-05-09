@@ -28,7 +28,9 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     
     protected UISystem uiSystem;
     protected UIButtonListenerSystem uiButtonListenerSystem;
-    
+    public GameObject alienPrefab;
+    public GameObject alienBoss;
+
 
     void Start()
     {

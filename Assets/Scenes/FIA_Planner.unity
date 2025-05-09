@@ -156,6 +156,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 7984275095676107465, guid: 4a24e3e2d7e2a1147ab9f47847aa6828, type: 3}
   crosshairPrefab: {fileID: 8158606125439611287, guid: 1f53757a948fe0846b28a84cb5c20deb, type: 3}
   bulletPrefab: {fileID: 7122801444477089083, guid: fbc7578b72b7c074f9f9b9d8e57744a1, type: 3}
+  alienPrefab: {fileID: 6133968646999843043, guid: 670e5ea706d1b124aa8604cc51562c3f, type: 3}
+  alienBoss: {fileID: 6133968646999843043, guid: 670e5ea706d1b124aa8604cc51562c3f, type: 3}
 --- !u!4 &232660902
 Transform:
   m_ObjectHideFlags: 0
@@ -232,8 +234,8 @@ Camera:
   m_GameObject: {fileID: 1509553534}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.18039216, g: 0.75686276, b: 0.54901963, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -284,7 +286,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

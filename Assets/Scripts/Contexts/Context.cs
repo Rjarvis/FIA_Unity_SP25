@@ -5,6 +5,7 @@ using Interfaces;
 public class Context
 {
     private readonly List<IEntityComponent> entities = new();
+    
 
     public void AddEntity(IEntityComponent entity)
     {
@@ -15,6 +16,11 @@ public class Context
     public void RemoveEntity(IEntityComponent entity)
     {
         entities.Remove(entity);
+    }
+
+    public bool ContainsEntity(IEntityComponent entity)
+    {
+        return entities.Contains(entity);
     }
 
     public IReadOnlyList<IEntityComponent> GetAllEntities() => entities;

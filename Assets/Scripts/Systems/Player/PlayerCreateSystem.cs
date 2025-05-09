@@ -61,10 +61,8 @@ namespace Systems.Player
             entityComponent.AddComponent(playerComponent);
 
 
-            var shootComponent = new ShootComponent { cooldownTime = 3f, lastShotTime = 0f};
+            var shootComponent = new ShootComponent { cooldownTime = 0.025f, lastShotTime = 0f};
             shootComponent.SetContext(GameContexts.Player);
-            shootComponent.cooldownTime = 3f;
-            shootComponent.lastShotTime = 0f;
             entityComponent.AddComponent(shootComponent);
             
             // Notify the EntitySystem

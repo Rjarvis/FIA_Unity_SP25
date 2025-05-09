@@ -1,3 +1,5 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Components
@@ -6,6 +8,8 @@ namespace Components
     {
         public Vector3 direction;
         public float speed = 10f;
+
+        
     }
     
     public class HealthComponent : EntityComponent
@@ -26,5 +30,9 @@ namespace Components
     public class PlayerComponent : EntityComponent
     {
         public int Level;
+    }
+
+    public class AlienComponent : EntityComponent
+    {
     }
 }
