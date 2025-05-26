@@ -1,3 +1,6 @@
+using ECS.Core;
+using ECS.Core.Interfaces;
+
 namespace Contexts
 {
     public static class GameContexts
@@ -10,5 +13,6 @@ namespace Contexts
         public static Context Level { get; set; }
         public static Context Player { get; set; }
         public static Context Alien { get; set; }
+        public static Context Meta { get; set; }
     }
 }

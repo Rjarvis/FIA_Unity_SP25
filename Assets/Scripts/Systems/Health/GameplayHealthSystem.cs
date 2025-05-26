@@ -1,5 +1,6 @@
 using Components;
 using Contexts;
+using ECS.Components;
 using Interfaces;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Systems.Health
             {
                 if (entity.TryGetComponent<HealthComponent>(out var health))
                 {
-                    if (health.Health <= 0)
+                    if (health.Value <= 0)
                     {
                         Debug.Log($"Entity {entity} has died.");
                         // Add death animation, remove entity, etc.

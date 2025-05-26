@@ -1,4 +1,5 @@
 using System;
+using ECS.Core;
 using UnityEngine;
 
 namespace Interfaces

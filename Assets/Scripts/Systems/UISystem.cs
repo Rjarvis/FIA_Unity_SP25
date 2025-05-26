@@ -4,6 +4,9 @@ using UnityEngine.EventSystems;
 
 namespace Systems
 {
+    /// <summary>
+    /// Does not need a full migration to ECS... yet.
+    /// </summary>
     public class UISystem : MonoBehaviour
     {
         private GameObject uiInstance;

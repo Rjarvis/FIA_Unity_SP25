@@ -1,10 +1,9 @@
-using Components;
-using Components.InputComponents;
 using Interfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Contexts;
-using Helpers;
+using ECS.Components;
+using ECS.Core;
 
 
 namespace Systems.Player
@@ -41,9 +40,9 @@ namespace Systems.Player
             }
         }
 
-        private void SpawnBullet(IEntityComponent player)
+        private void SpawnBullet(Entity player)
         {
-            var playerTransform = player.GetTransform();
+            var playerTransform = player.GetComponent<ViewComponent>().Transform;
 
             Vector2 crosshairScreenPos = crosshairTransform.position;
             Ray ray = mainCamera.ScreenPointToRay(crosshairScreenPos);
@@ -65,16 +64,14 @@ namespace Systems.Player
             var bulletGO = Instantiate(bulletPrefab, playerPos, Quaternion.identity);
 
             // ECS-style entity wrapping
-            var bulletEntity = bulletGO.AddComponent<EntityComponent>();
-            bulletEntity.SetContext(GameContexts.Gameplay);
-
+            var bulletEntity = GameContexts.Physics.CreateEntity();
             var bulletComponent = new BulletComponent() { direction = direction, speed = 1f };
-            bulletComponent.SetContext(GameContexts.Gameplay);
             bulletEntity.AddComponent(bulletComponent);
+            // EntitySystem.NotifyComponentAdded(bulletEntity, bulletComponent);//Redundant
 
             // Physics setup (2D)
-            bulletGO.AddComponent<BulletCollisionHandler2D>(); // Handles OnCollisionEnter2D
-            var collider = bulletGO.AddComponent<CircleCollider2D>();
+            // bulletGO.AddComponent<BulletCollisionHandler2D>(); // Handles OnCollisionEnter2D
+            var collider = bulletGO.GetComponent<CircleCollider2D>();
             collider.radius = 0.2f;
 
             var rb = bulletGO.AddComponent<Rigidbody2D>();

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ECS.Core;
 using Interfaces;
 using Systems;
 using UnityEngine;
@@ -46,55 +47,55 @@ public static class EntitySystem
         if (systemComponents.ContainsKey(context)) systemComponents[context].Clear();
     }
 
-    public static void NotifyEntityCreated(EntityComponent entity)
+    public static void NotifyEntityCreated(Entity entity)
     {
-        Debug.Log($"Entity {entity.gameObject.name} created, notifying systems.");
-
-        var entityContext = entity.GetContext();
-        if (systemComponents.TryGetValue(entityContext, out var systemList))
-        {
-            foreach (var system in systemList)
-            {
-                if (system is IEntityListener entityListener)
-                {
-                    entityListener.OnEntityCreated(entity);
-                }
-            }
-        }
+        // Debug.Log($"Entity {entity.gameObject.name} created, notifying systems.");
+        //
+        // var entityContext = entity.GetContext();
+        // if (systemComponents.TryGetValue(entityContext, out var systemList))
+        // {
+        //     foreach (var system in systemList)
+        //     {
+        //         if (system is IEntityListener entityListener)
+        //         {
+        //             entityListener.OnEntityCreated(entity);
+        //         }
+        //     }
+        // }
     }
     
-    public static void NotifyComponentAdded<T>(EntityComponent entity, T component) where T : class
+    public static void NotifyComponentAdded<T>(Entity entity, T component) where T : class
     {
-        var context = entity.GetContext();
-        if (!componentRegistry.TryGetValue(context, out var componentMap))
-        {
-            componentMap = new Dictionary<Type, List<IEntityComponent>>();
-            componentRegistry[context] = componentMap;
-        }
-
-        var type = typeof(T);
-        if (!componentMap.TryGetValue(type, out var list))
-        {
-            list = new List<IEntityComponent>();
-            componentMap[type] = list;
-        }
-
-        if (!list.Contains(entity))
-            list.Add(entity);
+        // var context = entity.GetContext();
+        // if (!componentRegistry.TryGetValue(context, out var componentMap))
+        // {
+        //     componentMap = new Dictionary<Type, List<IEntityComponent>>();
+        //     componentRegistry[context] = componentMap;
+        // }
+        //
+        // var type = typeof(T);
+        // if (!componentMap.TryGetValue(type, out var list))
+        // {
+        //     list = new List<IEntityComponent>();
+        //     componentMap[type] = list;
+        // }
+        //
+        // if (!list.Contains(entity))
+        //     list.Add(entity);
     }
 
     
-    public static void NotifyComponentRemoved<T>(EntityComponent entity, T component) where T : class
+    public static void NotifyComponentRemoved<T>(Entity entity, T component) where T : class
     {
-        var context = entity.GetContext();
-        if (componentRegistry.TryGetValue(context, out var componentMap))
-        {
-            var type = typeof(T);
-            if (componentMap.TryGetValue(type, out var list))
-            {
-                list.Remove(entity);
-            }
-        }
+        // var context = entity.GetContext();
+        // if (componentRegistry.TryGetValue(context, out var componentMap))
+        // {
+        //     var type = typeof(T);
+        //     if (componentMap.TryGetValue(type, out var list))
+        //     {
+        //         list.Remove(entity);
+        //     }
+        // }
     }
     
     public static List<IEntityComponent> GetEntitiesWithComponent<T>(Context context) where T : class

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Systems.Level.Data;
 
-namespace Helpers.Level
+namespace Helpers
 {
     public static class Level
     {

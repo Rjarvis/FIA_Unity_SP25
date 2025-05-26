@@ -1,7 +1,9 @@
+using ECS.Core;
+
 namespace Interfaces
 {
     public interface IEntityListener
     {
-        void OnEntityCreated(EntityComponent entity);
+        void OnEntityCreated(Entity entity);
     }
 }

@@ -12,6 +12,10 @@ using Random = UnityEngine.Random;
 
 namespace Systems
 {
+    /// <summary>
+    /// This might still be useful. Consider using this to be the point where we have a bridge for the UI && ECS.
+    /// I may probably be filled with interesting logic for handling or flagging entities for other systems to fire.
+    /// </summary>
     public class UIButtonListenerSystem : MonoBehaviour
     {
         private Transform uiRoot;
@@ -66,7 +70,7 @@ namespace Systems
         private void CreateLevelEntity()
         {
             //Get the Level Data
-            var levelData = Helpers.Level.Level.GetLevelData();
+            var levelData = Helpers.Level.GetLevelData();
 
             //Iterate through the level data and CreateLevelEntity(data)
             foreach (var data in levelData)
@@ -89,7 +93,7 @@ namespace Systems
             {
                 for (int i = 0; i < entityCount; i++)
                 {
-                    SpawnEntity();
+                    // SpawnEntity();
                 }
             }
         }
@@ -136,7 +140,7 @@ namespace Systems
     
             Debug.Log($"Random color: R={randomColor.r}, G={randomColor.g}, B={randomColor.b}");
 
-            entityCreator.CreateEntity(randomPos, randomColor, Random.Range(1, 10));
+            // entityCreator.CreateEntity(randomPos, randomColor, Random.Range(1, 10));
         }
     }
 

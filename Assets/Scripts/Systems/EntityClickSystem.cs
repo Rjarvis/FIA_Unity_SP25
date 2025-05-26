@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using Contexts;
+using ECS.Core;
 using Interfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -34,11 +35,13 @@ namespace Systems
                 if (hit.collider != null)
                 {
                     clickedEntity = hit.collider.gameObject;
-                    Destroy(clickedEntity);
-                    clickedEntity = null;
+                    Debug.Log($"You right clicked on {clickedEntity.name}");
+                    // clickedEntity.GetComponent<EntityLinker>();//Something that will hold a reference or a look up to the associated entity in the ECS
+                    // Destroy(clickedEntity);
+                    // clickedEntity = null;
                 }
             }
-            else if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0))//This moves entities on left-click-hold
             {
                 if (!clickedEntity) return; 
                 var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -51,12 +54,12 @@ namespace Systems
             }
         }
         
-        public void OnEntityCreated(EntityComponent entity)
+        public void OnEntityCreated(Entity entity)
         {
-            if (entity.GetContext() == GameContexts.Gameplay) // Ensure correct context
-            {
-                entities.Add(entity.gameObject);
-            }
+            // if (entity.GetContext() == GameContexts.Gameplay) // Ensure correct context
+            // {
+            //     entities.Add(entity.gameObject);
+            // }
         }
     }
 }
