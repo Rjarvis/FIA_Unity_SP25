@@ -86,7 +86,10 @@ namespace Systems.Create
             var healthComponent = level.AddComponent<HealthComponent>();
             healthComponent.Health = 3 * levelData.level;
 
+            level.AddComponent<CircleCollider2D>();
             level.AddComponent<BulletCollisionHandler2D>();
+            var rigidbody2D = level.AddComponent<Rigidbody2D>();
+            rigidbody2D.gravityScale = 0f;
             
             EntitySystem.NotifyComponentAdded(entityComponent, levelComponent);
 

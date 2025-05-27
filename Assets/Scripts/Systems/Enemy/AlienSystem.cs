@@ -150,7 +150,8 @@ namespace Systems.Enemy
 
         private void SpawnAlienWave()
         {
-            if (Aliens.Count > waveSize) return;
+            cumulativeDeltaTime = 0f;//Reset the timer
+            if (Aliens.Count > waveSize) return;//Don't spawn more aliens if there are already enough on screen.
             var currentCount = 0;
             bool isBoss = false;//TODO: Figure out how to use a number to determine a true or false statement
             
@@ -211,9 +212,11 @@ namespace Systems.Enemy
             var collider2D = newAlien.AddComponent<CircleCollider2D>();
             collider2D.radius = isBoss ? 0.5f : 0.12f;
             newAlien.AddComponent<BulletCollisionHandler2D>();
+            var rigidbody2D = newAlien.AddComponent<Rigidbody2D>();
+            rigidbody2D.gravityScale = 0f;
 
             AudioClip audioClipToPlay = isBoss ? SoundSystem.Instance.alienBoss : SoundSystem.Instance.alienSound;
-            SoundSystem.Instance.PlayThisSound(audioClipToPlay);
+            // SoundSystem.Instance.PlayThisSound(audioClipToPlay);
         }
 
         private Vector3 StartAlienMoving(int directionIndex)
