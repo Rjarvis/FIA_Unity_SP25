@@ -66,10 +66,11 @@ namespace Systems.Player
 
             // ECS-style entity wrapping
             var bulletEntity = bulletGO.AddComponent<EntityComponent>();
-            bulletEntity.SetContext(GameContexts.Gameplay);
+            bulletEntity.SetContext(GameContexts.Physics);
 
-            var bulletComponent = new BulletComponent() { direction = direction, speed = 1f };
-            bulletComponent.SetContext(GameContexts.Gameplay);
+            var bulletComponent = bulletGO.AddComponent<BulletComponent>();
+            bulletComponent.direction = direction;
+            bulletComponent.speed = 1f;
             bulletEntity.AddComponent(bulletComponent);
 
             // Physics setup (2D)

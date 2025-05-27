@@ -150,12 +150,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78d6ede78f9763f4183c364b9211713a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  systemController: {fileID: 4594658624050827876, guid: 2b1d83ab754d02c48a123c090761a8b6, type: 3}
+  systemController: {fileID: 0}
   uiPrefab: {fileID: 6570975075046313416, guid: f30dca0766313524e851360b469fe5cf, type: 3}
-  uiInstance: {fileID: 0}
   playerPrefab: {fileID: 7984275095676107465, guid: 4a24e3e2d7e2a1147ab9f47847aa6828, type: 3}
   crosshairPrefab: {fileID: 8158606125439611287, guid: 1f53757a948fe0846b28a84cb5c20deb, type: 3}
   bulletPrefab: {fileID: 7122801444477089083, guid: fbc7578b72b7c074f9f9b9d8e57744a1, type: 3}
+  levelRef: {fileID: 0}
+  alienDied: {fileID: 8300000, guid: 5cc50201cc4987a4a801f0ead133f35c, type: 3}
+  bulletPew: {fileID: 8300000, guid: e8a13c168dab3c54288ce94c67e5c444, type: 3}
+  planetHit: {fileID: 8300000, guid: 3a10b78522ff1e841bcfc7d06e1dff24, type: 3}
+  alienSound: {fileID: 8300000, guid: f8c7918c3e2029f45b0aea38100503f3, type: 3}
+  alienBossSound: {fileID: 8300000, guid: 376622ff5d17aed488b4676692fde4bc, type: 3}
   alienPrefab: {fileID: 6133968646999843043, guid: 670e5ea706d1b124aa8604cc51562c3f, type: 3}
   alienBoss: {fileID: 6133968646999843043, guid: 670e5ea706d1b124aa8604cc51562c3f, type: 3}
 --- !u!4 &232660902

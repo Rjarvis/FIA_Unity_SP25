@@ -5,7 +5,12 @@ using Interfaces;
 public class Context
 {
     private readonly List<IEntityComponent> entities = new();
-    
+    public readonly string Name;
+
+    public Context(string name)
+    {
+        Name = name;
+    }
 
     public void AddEntity(IEntityComponent entity)
     {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Interfaces;
+using NUnit.Framework;
 using Systems;
 using UnityEngine;
 
@@ -32,10 +33,38 @@ public static class EntitySystem
         }
     }
 
-    
-    public static Context CreateAndRegisterContext()
+    public static object GetSystem<T>(T system)
     {
-        var context = new Context();
+        foreach (var kvp in systemComponents)
+        {
+            foreach (var systemInContext in kvp.Value)
+            {
+                var systemInContextType = systemInContext.GetType();
+                if (systemInContextType == typeof(T)) return systemInContext;
+            }
+        }
+
+        return null;
+    }
+    
+    public static object GetSystem<T>()
+    {
+        foreach (var kvp in systemComponents)
+        {
+            foreach (var systemInContext in kvp.Value)
+            {
+                var systemInContextType = systemInContext.GetType();
+                if (systemInContextType == typeof(T)) return systemInContext;
+            }
+        }
+
+        return null;
+    }
+
+
+    public static Context CreateAndRegisterContext(string name)
+    {
+        var context = new Context(name);
         systemComponents[context] = new List<object>();
         componentRegistry[context] = new Dictionary<Type, List<IEntityComponent>>();
         return context;

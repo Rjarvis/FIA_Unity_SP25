@@ -47,20 +47,20 @@ namespace Systems.Player
             // Set the image component to the player object
             var imageComponent = playerInstance.AddComponent<ImageComponent>();
             imageComponent.Initialize(Helpers.Data.PlayerSpritePath);
-            imageComponent.SetContext(Contexts.GameContexts.Player);
+            imageComponent.SetContext(GameContexts.Player);
             
             // Add the EntityComponent to the player obj
             var entityComponent = playerInstance.AddComponent<EntityComponent>();
-            entityComponent.SetContext(Contexts.GameContexts.Player);
+            entityComponent.SetContext(GameContexts.Player);
+            GameContexts.Player.AddEntity(entityComponent);
             
             // Create and attach ECS-style data component
             var playerComponent = new PlayerComponent { Level = 0 };
-            entityComponent.SetContext(Contexts.GameContexts.Player);
+            entityComponent.SetContext(GameContexts.Player);
             entityComponent.AddComponent(playerComponent);
 
 
             var shootComponent = new ShootComponent { cooldownTime = 0.025f, lastShotTime = 0f};
-            shootComponent.SetContext(GameContexts.Player);
             entityComponent.AddComponent(shootComponent);
             
             // Notify the EntitySystem

@@ -13,6 +13,16 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     public GameObject crosshairPrefab;
     public GameObject bulletPrefab;
     #endregion
+
+    #region Sounds
+
+    public AudioClip alienDied;
+    public AudioClip bulletPew;
+    public AudioClip planetHit;
+    public AudioClip alienSound;
+    public AudioClip alienBossSound;
+
+    #endregion
     
     protected UISystem uiSystem;
     protected UIButtonListenerSystem uiButtonListenerSystem;
@@ -48,13 +58,27 @@ public class BootSequence : MonoBehaviourSingleton<BootSequence>
     private void InitializeContexts()
     {
         // Initialize different contexts
-        GameContexts.Gameplay = EntitySystem.CreateAndRegisterContext();
-        GameContexts.Create = EntitySystem.CreateAndRegisterContext();
-        GameContexts.UI = EntitySystem.CreateAndRegisterContext();
-        GameContexts.Physics = EntitySystem.CreateAndRegisterContext();
-        GameContexts.Input = EntitySystem.CreateAndRegisterContext();
-        GameContexts.Level = EntitySystem.CreateAndRegisterContext();
-        GameContexts.Player = EntitySystem.CreateAndRegisterContext();
-        GameContexts.Alien = EntitySystem.CreateAndRegisterContext();
+        GameContexts.Gameplay = EntitySystem.CreateAndRegisterContext("Gameplay");
+        GameContexts.Create = EntitySystem.CreateAndRegisterContext("Create");
+        GameContexts.UI = EntitySystem.CreateAndRegisterContext("UI");
+        GameContexts.Physics = EntitySystem.CreateAndRegisterContext("Physics");
+        GameContexts.Input = EntitySystem.CreateAndRegisterContext("Input");
+        GameContexts.Level = EntitySystem.CreateAndRegisterContext("Level");
+        GameContexts.Player = EntitySystem.CreateAndRegisterContext("Player");
+        GameContexts.Alien = EntitySystem.CreateAndRegisterContext("Alien");
+        GameContexts.Sound = EntitySystem.CreateAndRegisterContext("Sound");
+
+        GameContexts.AllContexts = new Context[]
+        {
+            GameContexts.Gameplay,
+            GameContexts.Create,
+            GameContexts.UI,
+            GameContexts.Physics,
+            GameContexts.Input,
+            GameContexts.Level,
+            GameContexts.Player,
+            GameContexts.Alien,
+            GameContexts.Sound
+        };
     }
 }

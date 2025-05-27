@@ -3,6 +3,7 @@ using Base;
 using Components;
 using Components.Health;
 using Contexts;
+using Helpers;
 using Helpers.Level;
 using Helpers.Math;
 using Systems;
@@ -73,14 +74,19 @@ namespace Systems.Create
             level.transform.position = Vector3.zero;
 
             var entityComponent = level.AddComponent<EntityComponent>();
-            entityComponent.SetContext(GameContexts.Gameplay);
+            entityComponent.SetContext(GameContexts.Level);
+            GameContexts.Level.AddEntity(entityComponent);
 
             var levelComponent = level.AddComponent<LevelComponent>();
             levelComponent.Initialize(levelData.radius);
-            levelComponent.SetContext(GameContexts.Level);
 
             var imageComponent = level.AddComponent<ImageComponent>();
             imageComponent.Initialize(levelData.imagePath);
+
+            var healthComponent = level.AddComponent<HealthComponent>();
+            healthComponent.Health = 3 * levelData.level;
+
+            level.AddComponent<BulletCollisionHandler2D>();
             
             EntitySystem.NotifyComponentAdded(entityComponent, levelComponent);
 

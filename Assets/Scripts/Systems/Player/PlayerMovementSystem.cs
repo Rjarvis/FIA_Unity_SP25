@@ -31,7 +31,6 @@ namespace Systems.Player
         {
             var movementComponent = gameObject.AddComponent<MovementComponent>();
             movementComponent.Speed = orbitSpeed;
-            movementComponent.SetContext(GameContexts.Player);
             var entityComponent = gameObject.AddComponent<EntityComponent>();
             entityComponent.SetContext(GameContexts.Player);
             EntitySystem.NotifyComponentAdded(entityComponent, movementComponent);

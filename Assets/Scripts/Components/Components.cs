@@ -4,15 +4,13 @@ using UnityEngine;
 
 namespace Components
 {
-    public class BulletComponent : EntityComponent
+    public class BulletComponent : MonoBehaviour
     {
         public Vector3 direction;
         public float speed = 10f;
-
-        
     }
     
-    public class HealthComponent : EntityComponent
+    public class HealthComponent : MonoBehaviour
     {
         public int Health;
 
@@ -22,17 +20,20 @@ namespace Components
         }
     }
 
-    public class MovementComponent : EntityComponent
+    public class MovementComponent : MonoBehaviour
     {
         public float Speed;
     }
 
-    public class PlayerComponent : EntityComponent
+    public class PlayerComponent : MonoBehaviour
     {
         public int Level;
     }
 
-    public class AlienComponent : EntityComponent
+    public class AlienComponent : MonoBehaviour
     {
+        public int Health;
+        public bool isAlive;
+        public bool isBoss;
     }
 }

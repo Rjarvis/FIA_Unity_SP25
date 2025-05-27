@@ -1,10 +1,12 @@
 using Contexts;
 using Systems.Create;
+using Systems.Enemy;
 using Systems.Health;
 using Systems.InputSystems;
 using Systems.Level;
 using Systems.Player;
 using Systems.Player.Initial;
+using Systems.Sound;
 using UnityEngine;
 
 namespace Systems
@@ -38,6 +40,7 @@ namespace Systems
             EntitySystem.UnRegisterSystem<CrosshairSystem>(GameContexts.Input);
             EntitySystem.UnRegisterSystem<BulletSystem>(GameContexts.Gameplay);
             EntitySystem.UnRegisterSystem<ShootingSystem>(GameContexts.Player);
+            EntitySystem.UnRegisterSystem<AlienSystem>(GameContexts.Alien);
         }
 
         public void InitializeSystems(GameObject uiPrefab,
@@ -46,6 +49,7 @@ namespace Systems
         {
             InitializeCreateGameEntitySystem();
             InitializeUISystems(uiPrefab, uiSystem);
+            InitializeSoundSystem();
             InitializeButtonEvents(this.uiSystem.GetInstance(), uiButtonListenerSystem);
             InitializeLevelCreateSystem();
             InitializePlayerSystems();
@@ -53,6 +57,26 @@ namespace Systems
             InitializePlayerMovementSystems();
             InitializeClickSystem();
             InitializeShootingSystem(bulletPrefab);
+            InitializeAlienSystem();
+        }
+
+        private void InitializeSoundSystem()
+        {
+            var soundSystem = Camera.main.gameObject.AddComponent<SoundSystem>();
+            soundSystem.alienBoss = BootSequence.Instance.alienBossSound;
+            soundSystem.alienDied = BootSequence.Instance.alienDied;
+            soundSystem.alienSound = BootSequence.Instance.alienSound;
+            soundSystem.bulletPew = BootSequence.Instance.bulletPew;
+            soundSystem.planetHit = BootSequence.Instance.planetHit;
+
+            EntitySystem.RegisterSystem(GameContexts.Sound, soundSystem);
+        }
+
+        private void InitializeAlienSystem()
+        {
+            GameObject alienSystemObj = new GameObject("AlienSystem");
+            var alienSystem = alienSystemObj.AddComponent<AlienSystem>();
+            EntitySystem.RegisterSystem(GameContexts.Alien, alienSystem);
         }
 
         private void InitializeShootingSystem(GameObject bulletPrefab)

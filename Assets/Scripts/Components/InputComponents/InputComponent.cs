@@ -1,10 +1,12 @@
+using UnityEngine;
+
 namespace Components.InputComponents
 {
-    public class InputComponent : EntityComponent
+    public class InputComponent : MonoBehaviour
     {
     }
 
-    public class ShootComponent : EntityComponent
+    public class ShootComponent : MonoBehaviour
     {
         public float cooldownTime;
         public float lastShotTime;
