@@ -41,7 +41,7 @@ namespace Helpers
             if (collidedContext == GameContexts.Level.Name)
             {
                 //Oh no! The aliens have collided with the planet!
-                // SoundSystem.Instance.PlayThisSound(SoundSystem.Instance.planetHit);
+                SoundSystem.Instance.PlayThisSound(SoundSystem.Instance.planetHit);
                 collision2D.gameObject.GetComponent<HealthComponent>().Health -= 1;//Make it so bosses do more damage
                 var alienComponent = GetComponent<AlienComponent>();
                 if (alienComponent) alienComponent.isAlive = false;

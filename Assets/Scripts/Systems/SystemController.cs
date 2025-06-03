@@ -1,13 +1,16 @@
 using Contexts;
 using Systems.Create;
 using Systems.Enemy;
+using Systems.GamePlay;
 using Systems.Health;
 using Systems.InputSystems;
 using Systems.Level;
 using Systems.Player;
 using Systems.Player.Initial;
 using Systems.Sound;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Systems
 {
@@ -21,6 +24,7 @@ namespace Systems
         public LevelCreateSystem levelCreateSystem;
         public UIButtonListenerSystem uiButtonListenerSystem;
         public UISystem uiSystem;
+        public ScoreSystem scoreSystem;
 
         private CreateGameEntitySystem entityCreator;
 
@@ -57,7 +61,15 @@ namespace Systems
             InitializePlayerMovementSystems();
             InitializeClickSystem();
             InitializeShootingSystem(bulletPrefab);
+            InitializeScoringSystem(uiSystem);
+            
             InitializeAlienSystem();
+        }
+
+        private void InitializeScoringSystem(UISystem uiSystem)
+        {
+            scoreSystem = this.AddComponent<ScoreSystem>();
+            scoreSystem.Initialize(uiSystem, GameContexts.Gameplay);
         }
 
         private void InitializeSoundSystem()

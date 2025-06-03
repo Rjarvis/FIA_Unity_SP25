@@ -5,6 +5,7 @@ using Contexts;
 using Helpers;
 using Helpers.Level;
 using Interfaces;
+using Systems.GamePlay;
 using Systems.Sound;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -37,12 +38,13 @@ namespace Systems.Enemy
         public void UpdateSystem()
         {
             cumulativeDeltaTime += Time.deltaTime;
-            if (waveCount > waveMax) return;//<---Progress to Level 2 here
-            // Count the current amount of aliens
-            if (cumulativeDeltaTime > spawnTimer) SpawnAlienWave();
-            
+            Debug.Log($"waveCount:<color=red>{waveCount}</color>");
+            // if (waveCount > waveMax) return;//<---This seems not good
+
             MoveAliens(); //Moves the aliens in a pattern towards the planet
             CheckDied(); //Checks if the aliens were hit by bulletObj this frame
+            if (cumulativeDeltaTime > spawnTimer && waveCount < waveMax) 
+                SpawnAlienWave();//if the deltaTime is greater than the spawnTimer and the waveCount is less than the waveMax Spawn a new wave of aliens
             Shoot(CheckIfCanShoot()); //Checks is the aliens can shoot this frame 
         }
 
@@ -55,6 +57,7 @@ namespace Systems.Enemy
             var alienComponent = Aliens[yourRandomNumber];
             
             //Now spawn a bullet that will move towards the centerPoint
+            Debug.Log($"alien: {alienComponent.name} wants to shoot!");
         }
 
         private bool CheckIfCanShoot() => cumulativeDeltaTime >= spawnTimer;// flip to <= and see what happens
@@ -64,15 +67,10 @@ namespace Systems.Enemy
         {
             // Need to count the aliens onscreen.
             //Lets use a simple for loop
-            for (int i = 0; i < Aliens.Count; i++)
-            {
-                if (Aliens[i].Health <= 0) Aliens[i].isAlive = false;
-            }
+            for (int i = 0; i < Aliens.Count; i++) { if (Aliens[i].Health <= 0) Aliens[i].isAlive = false; }
 
-            foreach (var alienComponent in Aliens)
-            {
-                if(alienComponent.isAlive == false) IGotOne();
-            }
+            // This is a foreach loop it can be used with Lists and IEnumerables
+            foreach (var alienComponent in Aliens) { if (alienComponent.isAlive == false) IGotOne(); }//This just plays a sound
 
             Aliens = RemoveAllTheDeadAliens();
         }
@@ -81,18 +79,29 @@ namespace Systems.Enemy
         {
             List<AlienComponent> toReturn = new List<AlienComponent>();
             List<AlienComponent> toDestroy = new List<AlienComponent>();
+            
+            //We run two loops to clean up a list to avoid changing memory while reading memory
             foreach (var alien in Aliens)
             {
-                if (alien.isAlive) toReturn.Add(alien);
+                if (alien.isAlive) toReturn.Add(alien); 
                 else toDestroy.Add(alien);
             }
 
+            if (toDestroy.Count <= 0) return toReturn;
+            AddToScoringSystem();
             foreach (var alien in toDestroy)
             {
                 Aliens.Remove(alien);
                 Destroy(alien.gameObject);
             }
             return toReturn;
+        }
+
+        private void AddToScoringSystem()
+        {
+            //Check if the scoring system exists
+            var scoreSystem = EntitySystem.GetSystem<ScoreSystem>() as ScoreSystem;
+            if (scoreSystem) scoreSystem.scoreComponent.Score += 1; 
         }
 
         public void IGotOne()
@@ -106,7 +115,6 @@ namespace Systems.Enemy
             alienComponent.Health -= 1;//Subtracts one from the alien's health;
         }
 
-
         private void MoveAliens()
         {
             // Get the center point to move toward
@@ -119,10 +127,13 @@ namespace Systems.Enemy
 
             Vector3 targetPosition = centerPoint.transform.position;
 
+            // This is checks if the List<Aliens> is null or has no Aliens in it.
+            if (null == Aliens || Aliens.Count == 0) return; 
+
             // Move each alien toward the center
             foreach (var alien in Aliens)
             {
-                if (alien == null || !alien.isAlive) continue;
+                if (!alien.isAlive) continue;
 
                 Transform alienTransform = alien.transform;
                 float moveSpeed = alien.isBoss ? 1f : 2f; // Bosses move slower
@@ -135,7 +146,6 @@ namespace Systems.Enemy
                 );
             }
         }
-
 
         private GameObject ReturnCenterPointObj(List<IEntityComponent> centerPoint)
         {

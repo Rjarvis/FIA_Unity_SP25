@@ -1004,6 +1004,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button_InputField
       objectReference: {fileID: 0}
+    - target: {fileID: 6916661377355844116, guid: 7c6d588d924b59a4c81fce8a3f69406e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8639604763865543802, guid: 7c6d588d924b59a4c81fce8a3f69406e, type: 3}
       propertyPath: m_text
       value: 'Create Entities
