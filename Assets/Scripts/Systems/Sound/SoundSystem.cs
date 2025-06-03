@@ -26,7 +26,9 @@ namespace Systems.Sound
 
         public void PlayThisSound(AudioClip audioClipToPlay)
         {
-            Debug.LogWarning($"I was going to play {audioClipToPlay.name} but I need your help!");
+            AudioSource.clip = audioClipToPlay;
+            AudioSource.Play();
+            // Debug.LogWarning($"I was going to play {audioClipToPlay.name} but I need your help!");
         }
     }
 }

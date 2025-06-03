@@ -52,8 +52,8 @@ namespace Systems.Enemy
         {
             if (checkIfCanShoot == false || Aliens.Count == 0) return;
             
-            //Get a randomNumber from 1 to aliens.Count
-            var yourRandomNumber = Random.Range(1, Aliens.Count);
+            //Get a randomNumber from 0 to aliens.Count
+            var yourRandomNumber = Random.Range(0, Aliens.Count - 1);
             var alienComponent = Aliens[yourRandomNumber];
             
             //Now spawn a bullet that will move towards the centerPoint
@@ -147,17 +147,6 @@ namespace Systems.Enemy
             }
         }
 
-        private GameObject ReturnCenterPointObj(List<IEntityComponent> centerPoint)
-        {
-            foreach (var obj in centerPoint)
-            {
-                var gameObj = obj.GetGameObject();
-                if (gameObj.transform.childCount > 0) return gameObj.transform.GetChild(0).gameObject;
-            }
-
-            return null;
-        }
-
         private void SpawnAlienWave()
         {
             cumulativeDeltaTime = 0f;//Reset the timer
@@ -172,6 +161,10 @@ namespace Systems.Enemy
             }
 
             waveCount++;
+            
+            //rah
+            var soundSystem = SoundSystem.Instance;
+            soundSystem.PlayThisSound(soundSystem.alienSound);
         }
 
         //TODO: Use this to make the isBoss variable true so a boss can spawn

@@ -18,16 +18,16 @@ namespace Helpers
                 // A switch has cases
                 case "Physics":
                     IAmProbablyABullet(collision);
-                    return;
+                    break;
                 case "Alien":
                     TakeMeToYourLeader(collision);
-                    return;
+                    break;
                 case "Level":
                     //This is where the Level will react
-                    return;
+                    break;
                 //They even have default to catch errors
                 default:
-                    Debug.Log($"Well Skibidi my toilet how'd that happen?! thisEntityContext:{thisEntityContext}");
+                    Debug.LogError($"Well Skibidi, how'd that happen?! thisEntityContext:{thisEntityContext}");
                     return;
             }
         }

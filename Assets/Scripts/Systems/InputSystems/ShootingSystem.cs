@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Contexts;
 using Helpers;
+using Systems.Sound;
 
 
 namespace Systems.Player
@@ -35,6 +36,10 @@ namespace Systems.Player
                         {
                             shootComponent.lastShotTime = Time.time;
                             SpawnBullet(entity);
+                            //Lets Play a bulletPew here
+                            // var soundSystem = EntitySystem.GetSystem<SoundSystem>() as SoundSystem;//the usual way to get a system
+                            var soundSystem = SoundSystem.Instance;
+                            soundSystem.PlayThisSound(SoundSystem.Instance.bulletPew);
                         }
                     }
                 }
@@ -45,6 +50,7 @@ namespace Systems.Player
         {
             var playerTransform = player.GetTransform();
 
+            //Here we do a ray-cast to get the point we clicked on screen
             Vector2 crosshairScreenPos = crosshairTransform.position;
             Ray ray = mainCamera.ScreenPointToRay(crosshairScreenPos);
 
@@ -70,7 +76,7 @@ namespace Systems.Player
 
             var bulletComponent = bulletGO.AddComponent<BulletComponent>();
             bulletComponent.direction = direction;
-            bulletComponent.speed = 1f;
+            bulletComponent.speed = 1f;//Make bullets faster here
             bulletEntity.AddComponent(bulletComponent);
 
             // Physics setup (2D)

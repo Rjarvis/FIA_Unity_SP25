@@ -38,6 +38,7 @@ namespace Systems
             EntitySystem.UnRegisterSystem<CreateGameEntitySystem>(GameContexts.Create);
             EntitySystem.UnRegisterSystem<UISystem>(GameContexts.UI);
             EntitySystem.UnRegisterSystem<UIButtonListenerSystem>(GameContexts.UI);
+            EntitySystem.UnRegisterSystem<SoundSystem>(GameContexts.Sound);
             EntitySystem.UnRegisterSystem<GameplayHealthSystem>(GameContexts.Gameplay);
             EntitySystem.UnRegisterSystem<PlayerCreateSystem>(GameContexts.Player);
             EntitySystem.UnRegisterSystem<PlayerMovementSystem>(GameContexts.Player);
@@ -62,7 +63,6 @@ namespace Systems
             InitializeClickSystem();
             InitializeShootingSystem(bulletPrefab);
             InitializeScoringSystem(uiSystem);
-            
             InitializeAlienSystem();
         }
 
