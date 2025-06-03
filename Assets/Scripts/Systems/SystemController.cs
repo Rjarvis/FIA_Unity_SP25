@@ -1,11 +1,14 @@
-using System;
 using Contexts;
-using Interfaces;
 using Systems.Create;
+using Systems.Enemy;
+using Systems.GamePlay;
 using Systems.Health;
 using Systems.InputSystems;
 using Systems.Level;
 using Systems.Player;
+using Systems.Player.Initial;
+using Systems.Sound;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -21,6 +24,9 @@ namespace Systems
         public LevelCreateSystem levelCreateSystem;
         public UIButtonListenerSystem uiButtonListenerSystem;
         public UISystem uiSystem;
+        public ScoreSystem scoreSystem;
+
+        private CreateGameEntitySystem entityCreator;
 
         public void UpdateSystems() => EntitySystem.Update();
 
@@ -38,69 +44,68 @@ namespace Systems
             EntitySystem.UnRegisterSystem<CrosshairSystem>(GameContexts.Input);
             EntitySystem.UnRegisterSystem<BulletSystem>(GameContexts.Gameplay);
             EntitySystem.UnRegisterSystem<ShootingSystem>(GameContexts.Player);
+            EntitySystem.UnRegisterSystem<AlienSystem>(GameContexts.Alien);
         }
 
-        public void InitializeSystems(GameObject uiPrefab, GameObject uiInstance, GameObject playerPrefab,
+        public void InitializeSystems(GameObject uiPrefab,
             GameObject crosshairPrefab, GameObject bulletPrefab, UISystem uiSystem,
             UIButtonListenerSystem uiButtonListenerSystem)
         {
-            // Ensure an instance of CreateGameEntitySystem exists
-            GameObject createGameSystemObj = null;
-            if (FindObjectOfType<CreateGameEntitySystem>() == null)
-            {
-                createGameSystemObj = new GameObject("CreateGameEntitySystem");
-                createGameSystemObj.AddComponent<CreateGameEntitySystem>();
-            }
-
-            var entityCreator = createGameSystemObj.GetComponent<CreateGameEntitySystem>();
-            EntitySystem.RegisterSystem(GameContexts.Create, entityCreator);
-
-            // Initialize UI System
-            if (uiSystem == null)
-                uiSystem = FindFirstObjectByType<UISystem>();
-
-            if (uiSystem != null)
-            {
-                uiSystem.Initialize(uiPrefab);
-                EntitySystem.RegisterSystem(GameContexts.UI, uiSystem);
-                uiInstance = uiSystem.GetInstance();
-                this.uiSystem = uiSystem;
-                
-                // Initialize button events
-                uiButtonListenerSystem = FindFirstObjectByType<UIButtonListenerSystem>();
-                if (uiButtonListenerSystem != null)
-                {
-                    uiButtonListenerSystem.Initialize(uiInstance, entityCreator);
-                    EntitySystem.RegisterSystem(GameContexts.UI, uiButtonListenerSystem);
-                    this.uiButtonListenerSystem = uiButtonListenerSystem;
-                }
-            }
-            else
-            {
-                Debug.LogError("UISystem not found in scene.");            
-            }
+            InitializeCreateGameEntitySystem();
+            InitializeUISystems(uiPrefab, uiSystem);
+            InitializeSoundSystem();
+            InitializeButtonEvents(this.uiSystem.GetInstance(), uiButtonListenerSystem);
+            InitializeLevelCreateSystem();
+            InitializePlayerSystems();
+            InitializeCrosshairSystem(crosshairPrefab, this.uiSystem.GetInstance());
+            InitializePlayerMovementSystems();
+            InitializeClickSystem();
+            InitializeShootingSystem(bulletPrefab);
+            InitializeScoringSystem(uiSystem);
             
-            // Initialize LevelCreateSystem
-            GameObject levelCreateObj = new GameObject("LevelCreateSystem");
-            var levelCreateSystem = levelCreateObj.AddComponent<LevelCreateSystem>();
-            levelCreateSystem.Initialize(entityCreator);
-            EntitySystem.RegisterSystem(GameContexts.Gameplay, levelCreateSystem);
-            this.levelCreateSystem = levelCreateSystem;
+            InitializeAlienSystem();
+        }
+
+        private void InitializeScoringSystem(UISystem uiSystem)
+        {
+            scoreSystem = this.AddComponent<ScoreSystem>();
+            scoreSystem.Initialize(uiSystem, GameContexts.Gameplay);
+        }
+
+        private void InitializeSoundSystem()
+        {
+            var soundSystem = Camera.main.gameObject.AddComponent<SoundSystem>();
+            soundSystem.alienBoss = BootSequence.Instance.alienBossSound;
+            soundSystem.alienDied = BootSequence.Instance.alienDied;
+            soundSystem.alienSound = BootSequence.Instance.alienSound;
+            soundSystem.bulletPew = BootSequence.Instance.bulletPew;
+            soundSystem.planetHit = BootSequence.Instance.planetHit;
+
+            EntitySystem.RegisterSystem(GameContexts.Sound, soundSystem);
+        }
+
+        private void InitializeAlienSystem()
+        {
+            GameObject alienSystemObj = new GameObject("AlienSystem");
+            var alienSystem = alienSystemObj.AddComponent<AlienSystem>();
+            EntitySystem.RegisterSystem(GameContexts.Alien, alienSystem);
+        }
+
+        private void InitializeShootingSystem(GameObject bulletPrefab)
+        {
+            GameObject shootingSystemObj = new GameObject("ShootingSystem");
+            shootingSystem = shootingSystemObj.AddComponent<ShootingSystem>();
+            var crosshairTransform = CrosshairSystem.Instance.crosshairUI;
+            shootingSystem.Initialize(Camera.main, crosshairTransform, bulletPrefab);
+            bulletSystem = shootingSystemObj.AddComponent<BulletSystem>();
             
-            // Initialize PlayerCreateSystem
-            PlayerCreateSystem playerCreateSystem = Systems.Player.Initial.InitializePlayerCreateSystems.Instance.Initialize();
-            EntitySystem.RegisterSystem(GameContexts.Player, playerCreateSystem);
-            this.playerCreateSystem = playerCreateSystem;
+            EntitySystem.RegisterSystem(GameContexts.Player, shootingSystem);
+            EntitySystem.RegisterSystem(GameContexts.Physics, bulletSystem);
+            
+        }
 
-            // Initialize CrosshairSystem
-            crosshairSystem = InputSystems.Initial.InitializeInputSystems.Instance.Initialize(crosshairPrefab, uiInstance);
-
-
-            //Register the playerData to the move system
-            playerCreateSystem.RegisterPlayerDataToMoveSystem();
-            movementSystem = PlayerMovementSystem.Instance;
-
-            // Find EntityClickSystem and assign it
+        private void InitializeClickSystem()
+        {
             EntityClickSystem clickSystem = FindFirstObjectByType<EntityClickSystem>();
             if (clickSystem == null)
             {
@@ -108,17 +113,59 @@ namespace Systems
                 clickSystem = clickSystemObj.AddComponent<EntityClickSystem>();
                 EntitySystem.RegisterSystem(GameContexts.Input, clickSystem);
             }
-            
-            GameObject shootingSystemObj = new GameObject("ShootingSystem");
-            shootingSystem = shootingSystemObj.AddComponent<ShootingSystem>();
-            bulletSystem = shootingSystemObj.AddComponent<BulletSystem>();
-            
-            var crosshairTransform = CrosshairSystem.Instance.crosshairUI;
-            shootingSystem.Initialize(Camera.main, crosshairTransform, bulletPrefab);
-            
-            EntitySystem.RegisterSystem(GameContexts.Player, shootingSystem);
-            EntitySystem.RegisterSystem(GameContexts.Physics, bulletSystem);
+        }
+
+        private void InitializePlayerMovementSystems()
+        {
+            playerCreateSystem.RegisterPlayerDataToMoveSystem();
+            movementSystem = PlayerMovementSystem.Instance;
+        }
+
+        private void InitializeCrosshairSystem(GameObject crosshairPrefab, GameObject uiInstance)
+        {
+            crosshairSystem = InputSystems.Initial.InitializeInputSystems.Instance.Initialize(crosshairPrefab, uiInstance);
             EntitySystem.RegisterSystem(GameContexts.UI, crosshairSystem);
+        }
+
+        private void InitializePlayerSystems()
+        {
+            PlayerCreateSystem playerCreateSystem = InitializePlayerCreateSystems.Instance.Initialize();
+            EntitySystem.RegisterSystem(GameContexts.Player, playerCreateSystem);
+            this.playerCreateSystem = playerCreateSystem;
+        }
+
+        private void InitializeLevelCreateSystem()
+        {
+            GameObject levelCreateObj = new GameObject("LevelCreateSystem");
+            var levelCreateSystem = levelCreateObj.AddComponent<LevelCreateSystem>();
+            levelCreateSystem.Initialize(entityCreator);
+            EntitySystem.RegisterSystem(GameContexts.Gameplay, levelCreateSystem);
+            this.levelCreateSystem = levelCreateSystem;
+        }
+
+        private void InitializeCreateGameEntitySystem()
+        {
+            var createGameSystemObj = new GameObject("CreateGameEntitySystem");
+            entityCreator = createGameSystemObj.AddComponent<CreateGameEntitySystem>();
+            EntitySystem.RegisterSystem(GameContexts.Create, entityCreator);
+        }
+
+        private void InitializeUISystems(GameObject uiPrefab, UISystem system)
+        {
+            system.Initialize(uiPrefab);
+            EntitySystem.RegisterSystem(GameContexts.UI, system);
+            uiSystem = system;
+        }
+
+        private void InitializeButtonEvents(GameObject uiInstance, UIButtonListenerSystem uiButtonListenerSystem)
+        {
+            uiButtonListenerSystem = FindFirstObjectByType<UIButtonListenerSystem>();
+            if (uiButtonListenerSystem != null)
+            {
+                uiButtonListenerSystem.Initialize(uiInstance, entityCreator);
+                EntitySystem.RegisterSystem(GameContexts.UI, uiButtonListenerSystem);
+                this.uiButtonListenerSystem = uiButtonListenerSystem;
+            }
         }
     }
 }

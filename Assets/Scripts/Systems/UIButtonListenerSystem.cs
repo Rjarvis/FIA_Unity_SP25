@@ -122,7 +122,7 @@ namespace Systems
 
         private void DeleteEntityLastEntity()
         {
-            entityCreator.DeleteLastEntity();
+            // entityCreator.DeleteLastEntity();
         }
 
         private void SpawnEntity()

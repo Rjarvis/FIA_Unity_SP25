@@ -1,14 +1,12 @@
 using Unity.Mathematics.Geometry;
 using UnityEngine;
 
-public class LevelComponent : EntityComponent
+public class LevelComponent : MonoBehaviour
 {
-    [SerializeField] private Context context;
     public float Radius;
 
     public void Initialize(float radius)
     {
-        context = Contexts.GameContexts.Level;
         Radius = radius;
         // CreateVisualCircle(radius);//UnComment to Debug...
         AttachCollider(radius);

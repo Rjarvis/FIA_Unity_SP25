@@ -2,48 +2,77 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Interfaces;
+using NUnit.Framework;
 using Systems;
 using UnityEngine;
 
 public static class EntitySystem
 {
-    internal static readonly Dictionary<Context, List<object>> systemComponents = new();
+    internal static readonly Dictionary<Context, List<object>> SystemsDictionary = new();
     internal static readonly Dictionary<Context, Dictionary<Type, List<IEntityComponent>>> componentRegistry = new();
 
 
     public static void RegisterSystem<T>(Context context, T obj) where T : class
     {
-        if (!systemComponents.ContainsKey(context))
+        if (!SystemsDictionary.ContainsKey(context))
         {
-            systemComponents[context] = new List<object>();
+            SystemsDictionary[context] = new List<object>();
         }
 
-        if (systemComponents[context].Any(x => x is T)) return; // Already registered
+        if (SystemsDictionary[context].Any(x => x is T)) return; // Already registered
 
-        systemComponents[context].Add(obj);
+        SystemsDictionary[context].Add(obj);
     }
 
     public static void UnRegisterSystem<T>(Context context) where T : class
     {
-        if (systemComponents.ContainsKey(context))
+        if (SystemsDictionary.ContainsKey(context))
         {
-            systemComponents[context].RemoveAll(system => system is T);
+            SystemsDictionary[context].RemoveAll(system => system is T);
             Debug.Log($"[EntitySystem] Unregistered system of type {typeof(T).Name} from {context.GetType().Name}");
         }
     }
 
-    
-    public static Context CreateAndRegisterContext()
+    public static object GetSystem<T>(T system)
     {
-        var context = new Context();
-        systemComponents[context] = new List<object>();
+        foreach (var kvp in SystemsDictionary)
+        {
+            foreach (var systemInContext in kvp.Value)
+            {
+                var systemInContextType = systemInContext.GetType();
+                if (systemInContextType == typeof(T)) return systemInContext;
+            }
+        }
+
+        return null;
+    }
+    
+    public static object GetSystem<T>()
+    {
+        foreach (var kvp in SystemsDictionary)
+        {
+            foreach (var systemInContext in kvp.Value)
+            {
+                var systemInContextType = systemInContext.GetType();
+                if (systemInContextType == typeof(T)) return systemInContext;
+            }
+        }
+
+        return null;
+    }
+
+
+    public static Context CreateAndRegisterContext(string name)
+    {
+        var context = new Context(name);
+        SystemsDictionary[context] = new List<object>();
         componentRegistry[context] = new Dictionary<Type, List<IEntityComponent>>();
         return context;
     }
 
     public static void UnRegisterContext(Context context)
     {
-        if (systemComponents.ContainsKey(context)) systemComponents[context].Clear();
+        if (SystemsDictionary.ContainsKey(context)) SystemsDictionary[context].Clear();
     }
 
     public static void NotifyEntityCreated(EntityComponent entity)
@@ -51,7 +80,7 @@ public static class EntitySystem
         Debug.Log($"Entity {entity.gameObject.name} created, notifying systems.");
 
         var entityContext = entity.GetContext();
-        if (systemComponents.TryGetValue(entityContext, out var systemList))
+        if (SystemsDictionary.TryGetValue(entityContext, out var systemList))
         {
             foreach (var system in systemList)
             {
@@ -112,7 +141,7 @@ public static class EntitySystem
 
     public static List<T> GetAllComponents<T>(Context context) where T : class
     {
-        if (systemComponents.TryGetValue(context, out var list))
+        if (SystemsDictionary.TryGetValue(context, out var list))
         {
             return list.OfType<T>().ToList();
         }
@@ -123,7 +152,7 @@ public static class EntitySystem
     {
         //TODO Refactor this so it is not a nested loop, but does a linq expression to get only "dirty" flagged components and entities.
         //Lets connect the systems to their interface counter parts
-        foreach (var system in systemComponents)
+        foreach (var system in SystemsDictionary)
         {
             //Update all systems
             foreach (var obj in system.Value)

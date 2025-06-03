@@ -15,6 +15,7 @@ namespace Systems.Player
                 if (bullet.TryGetComponent<BulletComponent>(out var bulletComp))
                 {
                     var transform = bullet.GetTransform();
+                    if(!transform) continue;
                     transform.position += bulletComp.direction * bulletComp.speed * Time.deltaTime;
 
                     // Destroy bullet if off screen

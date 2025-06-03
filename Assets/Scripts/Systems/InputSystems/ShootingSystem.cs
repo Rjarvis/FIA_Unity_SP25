@@ -4,6 +4,8 @@ using Interfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Contexts;
+using Helpers;
+
 
 namespace Systems.Player
 {
@@ -24,22 +26,15 @@ namespace Systems.Player
         {
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                Debug.Log("<color=red>Got Here</color>");
-                // FireBullet();
                 var playerEntities = GameContexts.Player.GetEntitiesWithComponent<PlayerComponent>();
-                Debug.Log($"<color=blue>playerEntities.Count: {playerEntities.Count}</color>");
-
                 foreach (var entity in playerEntities)
                 {
                     if (entity.TryGetComponent<ShootComponent>(out var shootComponent))
                     {
-                        Debug.Log("<color=yellow>Got Here</color>");
                         if (Time.time - shootComponent.lastShotTime > shootComponent.cooldownTime)
                         {
-                            Debug.Log("<color=green>Got Here</color>");
                             shootComponent.lastShotTime = Time.time;
                             SpawnBullet(entity);
-                            Debug.Log("Shot a bullet");
                         }
                     }
                 }
@@ -48,30 +43,44 @@ namespace Systems.Player
 
         private void SpawnBullet(IEntityComponent player)
         {
-            // Get the player's position;
             var playerTransform = player.GetTransform();
-            
-            // Get world point under crosshair
+
             Vector2 crosshairScreenPos = crosshairTransform.position;
             Ray ray = mainCamera.ScreenPointToRay(crosshairScreenPos);
 
-            Vector3 targetPoint;
-            if (Physics.Raycast(ray, out var hit))
-                targetPoint = hit.point;
-            else
-                targetPoint = ray.origin + ray.direction * 100f; // fallback
+            Vector3 targetPoint = Physics.Raycast(ray, out var hit)
+                ? hit.point
+                : ray.origin + ray.direction * 100f;
 
-            Vector3 direction = (targetPoint - playerTransform.position).normalized;
+            Vector2 playerPos = new Vector2(playerTransform.position.x, playerTransform.position.y);
+            Vector2 targetPos = new Vector2(targetPoint.x, targetPoint.y);
+            Vector2 direction = (targetPos - playerPos).normalized;
 
-            // Create bullet entity
-            var bulletGO = GameObject.Instantiate(bulletPrefab, playerTransform.position, Quaternion.identity);
+            // V2
+            // Vector2 offset = direction * 1.5f;
+            // Vector2 spawnPos = playerPos + offset;
+            // var bulletGO = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+            
+            // V1
+            var bulletGO = Instantiate(bulletPrefab, playerPos, Quaternion.identity);
+
+            // ECS-style entity wrapping
             var bulletEntity = bulletGO.AddComponent<EntityComponent>();
-            bulletEntity.SetContext(GameContexts.Gameplay);
+            bulletEntity.SetContext(GameContexts.Physics);
 
-            var bulletComponent = new BulletComponent() { direction = direction, speed = 50f };
-            bulletComponent.SetContext(GameContexts.Gameplay);
+            var bulletComponent = bulletGO.AddComponent<BulletComponent>();
+            bulletComponent.direction = direction;
+            bulletComponent.speed = 1f;
             bulletEntity.AddComponent(bulletComponent);
-            EntitySystem.NotifyComponentAdded(bulletEntity, bulletComponent);
+
+            // Physics setup (2D)
+            bulletGO.AddComponent<BulletCollisionHandler2D>(); // Handles OnCollisionEnter2D
+            var collider = bulletGO.AddComponent<CircleCollider2D>();
+            collider.radius = 0.2f;
+
+            var rb = bulletGO.AddComponent<Rigidbody2D>();
+            rb.gravityScale = 0f;
+            rb.linearVelocity = direction * bulletComponent.speed;
         }
     }
 }

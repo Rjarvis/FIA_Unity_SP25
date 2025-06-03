@@ -4,9 +4,10 @@ using UnityEngine.EventSystems;
 
 namespace Systems
 {
-    public class UISystem : MonoBehaviour
+    public class UISystem : MonoBehaviour, ISystem
     {
         private GameObject uiInstance;
+        public GameObject UiInstance { get; private set; }
 
         public void Initialize(GameObject uiPrefab)
         {
@@ -17,6 +18,7 @@ namespace Systems
             }
 
             uiInstance = Instantiate(uiPrefab);
+            UiInstance = uiInstance;
             Debug.Log("UI Prefab instantiated successfully from BootSequence.");
 
             EnsureCanvasSetup();
@@ -57,9 +59,6 @@ namespace Systems
             }
         }
 
-        public GameObject GetInstance()
-        {
-            return uiInstance;
-        }
+        public GameObject GetInstance() => uiInstance;
     }
 }

@@ -1,11 +1,9 @@
-using System;
 using Base;
 using Components;
 using Components.InputComponents;
 using Contexts;
 using Helpers.Level;
 using Interfaces;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Systems.Player
@@ -49,22 +47,20 @@ namespace Systems.Player
             // Set the image component to the player object
             var imageComponent = playerInstance.AddComponent<ImageComponent>();
             imageComponent.Initialize(Helpers.Data.PlayerSpritePath);
-            imageComponent.SetContext(Contexts.GameContexts.Player);
+            imageComponent.SetContext(GameContexts.Player);
             
             // Add the EntityComponent to the player obj
             var entityComponent = playerInstance.AddComponent<EntityComponent>();
-            entityComponent.SetContext(Contexts.GameContexts.Player);
+            entityComponent.SetContext(GameContexts.Player);
+            GameContexts.Player.AddEntity(entityComponent);
             
             // Create and attach ECS-style data component
             var playerComponent = new PlayerComponent { Level = 0 };
-            entityComponent.SetContext(Contexts.GameContexts.Player);
+            entityComponent.SetContext(GameContexts.Player);
             entityComponent.AddComponent(playerComponent);
 
 
-            var shootComponent = new ShootComponent { cooldownTime = 3f, lastShotTime = 0f};
-            shootComponent.SetContext(GameContexts.Player);
-            shootComponent.cooldownTime = 3f;
-            shootComponent.lastShotTime = 0f;
+            var shootComponent = new ShootComponent { cooldownTime = 0.025f, lastShotTime = 0f};
             entityComponent.AddComponent(shootComponent);
             
             // Notify the EntitySystem
@@ -77,7 +73,7 @@ namespace Systems.Player
         {
             // Register data to movement system
             var moveSystem = PlayerMovementSystem.Instance;
-            moveSystem.gameObject.transform.SetParent(this.gameObject.transform);
+            moveSystem.gameObject.transform.SetParent(gameObject.transform);
             moveSystem.PlayerTransform = playerInstance;
             moveSystem.CenterPoint = centerObj;
             moveSystem.radius = radius;

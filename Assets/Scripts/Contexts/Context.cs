@@ -5,6 +5,12 @@ using Interfaces;
 public class Context
 {
     private readonly List<IEntityComponent> entities = new();
+    public readonly string Name;
+
+    public Context(string name)
+    {
+        Name = name;
+    }
 
     public void AddEntity(IEntityComponent entity)
     {
@@ -15,6 +21,11 @@ public class Context
     public void RemoveEntity(IEntityComponent entity)
     {
         entities.Remove(entity);
+    }
+
+    public bool ContainsEntity(IEntityComponent entity)
+    {
+        return entities.Contains(entity);
     }
 
     public IReadOnlyList<IEntityComponent> GetAllEntities() => entities;
@@ -35,6 +46,7 @@ public class Context
 
 
     // 🆕 Optional: Query all components of type T directly (e.g., HealthComponent)
+    // This is a generic.  Generics are useful in being able to find things by type.
     public List<T> GetAllComponentsOfType<T>() where T : class
     {
         var results = new List<T>();
